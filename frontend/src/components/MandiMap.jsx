@@ -31,6 +31,10 @@ export default function MandiMap({ rankedMarkets, origins, selectedOriginId, lan
     }
 
     const map = mapInstanceRef.current;
+    setTimeout(() => {
+      if (map) map.invalidateSize();
+    }, 150);
+
     
     // Clear previous dynamic layers (markers and polylines)
     map.eachLayer((layer) => {
