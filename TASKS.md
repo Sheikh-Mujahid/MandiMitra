@@ -35,31 +35,68 @@
 
 ---
 
-## TASK 3: Core Recommendation Engine
-- [x] Implement pure JavaScript engine: `frontend/src/engine/engine.js`
-  - Function signature: `rankMarkets({crop, quantity, location, vehicle, ratePerKm, priceAdjust, roundTrip, extraCosts, lang})`
-  - Formula:
-    - `expectedPrice = modalPrice * (1 + trendAdjustment + userPriceChange)`
-    - `revenue = expectedPrice * quantity`
-    - `transport = vehiclesNeeded * roadDistanceKm * costPerKm * (roundTrip ? 2 : 1)`
-    - `netReturn = revenue - transport - loading - marketFee - commission - wastage`
-  - Vehicle sizing logic (Pickup 1.5T, Tata 407 3T, Tractor 4T, 14ft 6T, 6-Wheeler 12T)
-  - Dynamic "Why Chosen" rationale generator explaining profit advantage over runner-up and nearest mandi
-- [x] Vitest unit test suite (`frontend/src/engine/engine.test.js`) verifying math consistency and edge cases
+## TASK 3: Recommendation Engine in `frontend/src/engine/` (Pure JS) with Unit Tests (Vitest)
+- [x] `frontend/src/engine/transport.js`:
+  - Vehicle presets: Tractor (40q, ₹25/km), Pickup (20q, ₹18/km), Truck (100q, ₹35/km), plus Tata 407 & 6-Wheeler
+  - Editable rates support
+  - `vehiclesNeeded = Math.ceil(quantity / capacity)`
+  - `cost = vehicles * distanceKm * ratePerKm * (roundTrip ? 2 : 1)`
+  - `recommendVehicle(quantity, distanceKm)`: picks cheapest vehicle type for load
+- [x] `frontend/src/engine/trend.js`:
+  - From price history: 7-day change %, 30-day change %, moving average, regression slope, volatility (std dev)
+  - `trendLabel`: Rising / Falling / Stable (configurable threshold)
+  - `trendAdjustment`: damped near-term adjustment (capped at ±5%)
+  - `confidence` (0-100) computed from observations, volatility, days since last update; returns contributing factors object
+- [x] `frontend/src/engine/netReturn.js`:
+  - Core formula: `expectedPrice = modalPrice * (1 + trendAdjustment + userPriceChange)`
+  - `revenue = expectedPrice * quantity`
+  - `transport = vehiclesNeeded * roadDistanceKm * costPerKm * (roundTrip ? 2 : 1)`
+  - `netReturn = revenue - transport - loading - marketFee - commission - wastage - storage`
+  - Editable default extras per crop (loading, APMC cess, commission, transit wastage, storage)
+  - Returns full cost breakdown object
+- [x] `frontend/src/engine/rank.js`: `rankMarkets(...)`
+  - Stage 1 filter: market trades crop, data within last N days (default 7), max distance (default 250 km); tracks excluded markets with reasons
+  - Stage 2 rank: risk-adjusted net return (small documented confidence/staleness penalty without double-counting trend or distance)
+  - Output includes rank, margin over next option (₹ and %), `isHighestPriceNotRankOne` flag
+- [x] `frontend/src/engine/explain.js`: `explainRecommendation(result)` returns structured reasons and plain-language paragraphs (EN, HI, MR) covering price advantage, transport, trend, margin over #2, and highest-price-not-highest-profit case
+- [x] `frontend/src/engine/extras.js`: `breakEvenExtraDistance(...)` and `sellNowVsWait(...)` scenarios
+- [x] Vitest unit test suite (`frontend/src/engine/engine.test.js`) with 10/10 tests passing:
+  - Vehicle step function
+  - Round-trip toggle
+  - Quantity change flipping ranking
+  - Transport slider flipping #1
+  - Stale-market exclusion
+  - Margin calculation (₹ and %)
+  - Test fixture where highest-price market loses to nearer one
+  - Break-even distance & sell now vs wait
+- [x] Commit: `feat(engine): add net return, transport, trend and ranking with tests`
 
 ---
 
-## TASK 4: User Assumptions & What-If Controls
-- [x] Interactive controls panel with zero-latency reactive updates:
-  - Crop selection chips
-  - Farmer origin location picker
-  - Harvest quantity slider (quintals + tonnes)
-  - Vehicle selection with auto-selection recommendation
-  - Freight rate slider (₹/km)
-  - One-way vs. Round-trip haulage toggle
-  - What-If Price Stress Testing slider (-20% to +20%)
-  - Advanced APMC cess, weighment, and transit spoilage accordion
-- [x] Hero card highlighting Rank #1 Mandi with transparent decision rationale and in-pocket net profit
+## TASK 4: Backend API + Farmer Input Form
+- [x] FastAPI Backend Endpoints (`backend/main.py`):
+  - `GET /markets` -> `markets.json`
+  - `GET /crops` -> available crops list
+  - `GET /prices?crop=&market=` -> history for crop (optionally filtered by market)
+  - `GET /distances?from=` -> distances from farmer location to all mandis
+  - `GET /data-status` -> latest record date per mandi, fetch timestamp, data source, freshness status (`fresh` <= 1 day, `aging` 2-3 days, `stale` > 3)
+  - In-memory cache with modification-time (`mtime`) auto-reload
+  - Full CORS and error handling
+  - 8/8 Pytest tests passing (`backend/test_backend.py`)
+- [x] Frontend Data Layer & Input Form:
+  - `frontend/src/api.js`: loads all endpoints in parallel with caching and offline fallback
+  - `frontend/src/context/FarmerContext.jsx`: central state management, validation, and reactive ranking
+  - Farmer Input Form (`AssumptionsPanel.jsx` & `FarmerInputForm.jsx`):
+    - Crop dropdown
+    - Quantity (quintals) slider and numeric input
+    - Farmer origin location picker + "Use My Location" browser geolocation snapping
+    - Vehicle type presets with auto-prefilled freight rates
+    - Round-trip haulage toggle
+    - What-if expected price stress testing slider (-20% to +20%)
+    - Input validation with user-friendly error messages
+    - Prominent visible note: *"Modal prices from official mandi data; actual price depends on quality and grade."*
+- [x] Commit: `feat: add API endpoints and farmer input form`
+
 
 ---
 
