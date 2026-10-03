@@ -41,6 +41,7 @@ export default function App() {
   const [isWhyOpen, setIsWhyOpen] = useState(false);
   const [dataStatus, setDataStatus] = useState(null);
   const [weatherData, setWeatherData] = useState(SAMPLE_DEMO_WEATHER);
+  const liveWeatherRef = useRef(null); // Stores fetched live weather so demo preset can restore it
 
   // Recommendation flip highlight banner state
   const prevTopIdRef = useRef(null);
@@ -52,7 +53,10 @@ export default function App() {
   useEffect(() => {
     fetchDataStatus().then(setDataStatus).catch(() => {});
     fetchMandisWeather().then((data) => {
-      if (data && data.mandis) setWeatherData(data);
+      if (data && data.mandis) {
+        liveWeatherRef.current = data;
+        setWeatherData(data);
+      }
     }).catch(() => {});
   }, []);
 
@@ -132,6 +136,11 @@ export default function App() {
   const cropDisplayName = lang === 'mr' ? currentCropObj.nameMr : lang === 'hi' ? currentCropObj.nameHi : currentCropObj.name;
 
   const handleApplyPreset = (presetKey) => {
+    // Restore live weather when switching away from the Akola Storm Demo
+    if (presetKey !== 'akola_weather_demo' && liveWeatherRef.current) {
+      setWeatherData(liveWeatherRef.current);
+    }
+
     if (presetKey === 'wheat_amravati_flip') {
       // 50 q Wheat from Amravati / Morshi cluster:
       // At Rs 18/km, distant Buldhana (+100 Rs/q higher price) wins #1!
@@ -208,6 +217,8 @@ export default function App() {
       // Akola has thunderstorm/heavy rain (WMO 95, 28.5mm) in sample weather.
       // From Murtizapur at ₹35/km freight, Akola is #1 and Amravati is #2.
       // Toggling weather risk ON penalizes Akola by 1.5% and flips Amravati to #1!
+      // Force SAMPLE_DEMO_WEATHER so the demo works even when live weather is clear.
+      setWeatherData(SAMPLE_DEMO_WEATHER);
       setAssumptions({
         crop: 'wheat',
         quantity: 50,
