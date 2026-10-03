@@ -27,7 +27,7 @@
   - OSRM public API with polite rate-limiting, disk cache, and Haversine x 1.3 fallback
   - Records calculation method used (`osrm` or `haversine_fallback`)
 - [x] `.github/workflows/daily-update.yml`:
-  - Cron scheduled at 01:00 UTC (6:30 AM IST) + `workflow_dispatch`
+  - Cron scheduled at 02:00 UTC (07:30 AM IST) + `workflow_dispatch`
   - Uses GitHub repository secrets `DATA_GOV_API_KEY` and `RESOURCE_ID`
   - Commits and pushes changed data files
 - [x] Generate 30-day initial offline snapshot for demo and add `scripts/README.md`
@@ -97,24 +97,27 @@
     - Prominent visible note: *"Modal prices from official mandi data; actual price depends on quality and grade."*
 - [x] Commit: `feat: add API endpoints and farmer input form`
 
+---
+
+## TASK 5: Interactive Dashboard (Main Demo)
+- [x] 1. Recommendation card: "Sell at <market>" with expected net return in Indian format (₹1,32,500), rank medal, and a "Why?" button
+- [x] 2. Ranked comparison table: Rank, Market, Distance, Price/q, Trend arrow and %, Transport, Other costs, Net return, Confidence, Freshness dot; Excluded markets listed below with reason; animated row reordering
+- [x] 3. What-if simulator: sliders for quantity (1-300 q), transport rate per km, expected price change (-10% to +10%), round-trip toggle, vehicle selector; updates on every change with zero button press; highlight when #1 changes ("Recommendation changed: <from> -> <to>")
+- [x] 4. "Why this market?" panel: structured reasons from explainRecommendation, profit breakdown waterfall, margin over #2 in ₹ and %, callout "Highest price is not highest profit" when relevant, expandable full calculation
+- [x] 5. Compare-two-markets view: pick any two markets side by side with diff highlights
+- [x] 6. Price trend chart (Recharts): 30-day modal price lines for top 3 markets with 7-day and 30-day change, confidence indicator with contributing factors
+- [x] 7. Data freshness badge in header from `/data-status` (green updated today, yellow older, red stale, plus sample data indicator)
+- [x] 8. Demo scenario preset button: "50 q wheat from Amravati" loading a scenario where raising transport rate (₹18 -> ₹42/km) flips #1 market (Buldhana -> Amravati)
+- [x] 9. Responsive mobile-first design, large readable fonts, clean farmer-friendly design, empty and loading states
+- [x] Commit: `feat(ui): add ranking, what-if simulator, explanation and demo scenario`
 
 ---
 
-## TASK 5: Interactive Visualizations & Geographic Mapping
-- [x] Ranked mandis list with expandable cost breakdown drawer
-- [x] Net Profit vs. Road Distance Tradeoff chart (Recharts) proving highest modal price != highest profit
-- [x] Revenue & Deductions Waterfall/Stacked bar chart (Recharts)
-- [x] 7-Day Historical Modal Price Trends chart (Recharts)
-- [x] Geographic Mandi Map (Leaflet) with farmer origin pin, ranked mandi pins, and route polylines
-
----
-
-## TASK 6: Multilingual UI & Final Polishing
-- [x] First-class support for English, Hindi (हिंदी), and Marathi (मराठी)
-- [x] Agricultural terminology translated (e.g. कांदा, टोमॅटो, बटाटा, हरभरा, हमाली, तोलाई)
-- [x] Strict compliance standards:
-  - "Prices are MODAL prices" prominently displayed
-  - "Estimate, not guaranteed" forecast disclaimer
-  - Sourced from "daily-updated official mandi data" (never "live")
-- [x] Data methodology modal with mathematical formula explanation
-- [x] Full test pass (Vitest + Pytest) & production build verification
+## TASK 6: Stretch Features, Polish, Docs, Deploy
+- [x] 1. Break-even distance card: extra distance a higher-priced market can be before it stops being worth it vs baseline market (`extras.js`). Commit: `feat: add break-even distance`
+- [x] 2. Sell now vs wait 3 days: low/expected/high return range, storage cost and risk labeled "Estimate, not guaranteed" (`SellNowVsWaitCard.jsx`). Commit: `feat: add sell now vs wait scenario`
+- [x] 3. Language toggle English / Hindi / Marathi covering all UI labels and explanation text (`translations.js`). Commit: `feat: add language toggle`
+- [x] 4. Price alert (in-app): farmer sets target price for crop/market, banner when latest crosses it or distance from target, stored in `localStorage` (`PriceAlertBanner.jsx`). Commit: `feat: add in-app price alerts`
+- [x] 5. Interactive map with Leaflet/OpenStreetMap: farmer location and mandis, click marker to see distance, price, transport, and net return (`MandiMap.jsx`). Commit: `feat: add mandi map`
+- [x] 6. Final README: problem, solution, screenshots, architecture diagram, data source and limits, calculation formulas, daily update workflow, setup instructions, "how we differ from e-NAM, AGMARKNET and similar tools", future work. Commit: `docs: finalize README`
+- [x] 7. Deploy: frontend to Vercel/Netlify, backend to Render/Railway, environment variables documented, live links in README (`vercel.json`, `netlify.toml`, `render.yaml`, `.env.example`). Commit: `chore: deploy`
