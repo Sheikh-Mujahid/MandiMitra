@@ -1,0 +1,426 @@
+{
+  "crops": [
+    { "id": "onion", "name": "Onion", "nameHi": "प्याज (Onion)", "nameMr": "कांदा (Onion)", "category": "Vegetable", "unit": "₹/Quintal", "defaultRatePerKm": 32, "shelfLifeDays": 14, "spoilageFactor": 0.00015 },
+    { "id": "tomato", "name": "Tomato", "nameHi": "टमाटर (Tomato)", "nameMr": "टोमॅटो (Tomato)", "category": "Vegetable", "unit": "₹/Quintal", "defaultRatePerKm": 30, "shelfLifeDays": 3, "spoilageFactor": 0.00045 },
+    { "id": "potato", "name": "Potato", "nameHi": "आलू (Potato)", "nameMr": "बटाटा (Potato)", "category": "Vegetable", "unit": "₹/Quintal", "defaultRatePerKm": 32, "shelfLifeDays": 30, "spoilageFactor": 0.00008 },
+    { "id": "soybean", "name": "Soybean", "nameHi": "सोयाबीन (Soybean)", "nameMr": "सोयाबीन (Soybean)", "category": "Oilseed", "unit": "₹/Quintal", "defaultRatePerKm": 35, "shelfLifeDays": 180, "spoilageFactor": 0.00002 },
+    { "id": "wheat", "name": "Wheat", "nameHi": "गेहूं (Wheat)", "nameMr": "गहू (Wheat)", "category": "Cereal", "unit": "₹/Quintal", "defaultRatePerKm": 35, "shelfLifeDays": 180, "spoilageFactor": 0.00002 },
+    { "id": "gram_chana", "name": "Chana / Gram", "nameHi": "चना (Gram)", "nameMr": "हरभरा (Chana)", "category": "Pulse", "unit": "₹/Quintal", "defaultRatePerKm": 35, "shelfLifeDays": 180, "spoilageFactor": 0.00002 },
+    { "id": "cotton", "name": "Cotton", "nameHi": "कपास (Cotton)", "nameMr": "कापूस (Cotton)", "category": "Cash Crop", "unit": "₹/Quintal", "defaultRatePerKm": 38, "shelfLifeDays": 120, "spoilageFactor": 0.00001 },
+    { "id": "maize", "name": "Maize", "nameHi": "मक्का (Maize)", "nameMr": "मका (Maize)", "category": "Cereal", "unit": "₹/Quintal", "defaultRatePerKm": 32, "shelfLifeDays": 120, "spoilageFactor": 0.00003 }
+  ],
+  "marketPrices": {
+    "onion": [
+      {
+        "marketId": "lasalgaon_mandi",
+        "modalPrice": 2450,
+        "minPrice": 1800,
+        "maxPrice": 2820,
+        "arrivalsQntl": 18500,
+        "trend": "UP",
+        "trendAdjustment": 0.035,
+        "confidence": 0.96,
+        "dataAgeDays": 0,
+        "history": [2320, 2360, 2380, 2400, 2420, 2435, 2450]
+      },
+      {
+        "marketId": "pimpalgaon_mandi",
+        "modalPrice": 2520,
+        "minPrice": 1950,
+        "maxPrice": 2900,
+        "arrivalsQntl": 14200,
+        "trend": "UP",
+        "trendAdjustment": 0.04,
+        "confidence": 0.94,
+        "dataAgeDays": 0,
+        "history": [2360, 2400, 2410, 2450, 2470, 2500, 2520]
+      },
+      {
+        "marketId": "nashik_dindori",
+        "modalPrice": 2380,
+        "minPrice": 1750,
+        "maxPrice": 2700,
+        "arrivalsQntl": 4800,
+        "trend": "STABLE",
+        "trendAdjustment": 0.005,
+        "confidence": 0.90,
+        "dataAgeDays": 0,
+        "history": [2350, 2360, 2370, 2380, 2375, 2380, 2380]
+      },
+      {
+        "marketId": "yeola_mandi",
+        "modalPrice": 2410,
+        "minPrice": 1800,
+        "maxPrice": 2750,
+        "arrivalsQntl": 7300,
+        "trend": "UP",
+        "trendAdjustment": 0.02,
+        "confidence": 0.92,
+        "dataAgeDays": 0,
+        "history": [2320, 2340, 2370, 2380, 2390, 2400, 2410]
+      },
+      {
+        "marketId": "pune_gultekdi",
+        "modalPrice": 2750,
+        "minPrice": 2100,
+        "maxPrice": 3200,
+        "arrivalsQntl": 11500,
+        "trend": "UP",
+        "trendAdjustment": 0.045,
+        "confidence": 0.95,
+        "dataAgeDays": 0,
+        "history": [2550, 2580, 2620, 2650, 2690, 2720, 2750]
+      },
+      {
+        "marketId": "vashi_apmc",
+        "modalPrice": 2980,
+        "minPrice": 2200,
+        "maxPrice": 3500,
+        "arrivalsQntl": 24000,
+        "trend": "UP",
+        "trendAdjustment": 0.05,
+        "confidence": 0.97,
+        "dataAgeDays": 0,
+        "history": [2780, 2820, 2850, 2900, 2920, 2950, 2980]
+      },
+      {
+        "marketId": "ahmednagar_mandi",
+        "modalPrice": 2400,
+        "minPrice": 1800,
+        "maxPrice": 2700,
+        "arrivalsQntl": 6200,
+        "trend": "STABLE",
+        "trendAdjustment": 0.00,
+        "confidence": 0.89,
+        "dataAgeDays": 1,
+        "history": [2420, 2410, 2400, 2400, 2410, 2400, 2400]
+      }
+    ],
+    "tomato": [
+      {
+        "marketId": "pimpalgaon_mandi",
+        "modalPrice": 1850,
+        "minPrice": 1200,
+        "maxPrice": 2400,
+        "arrivalsQntl": 9800,
+        "trend": "UP",
+        "trendAdjustment": 0.05,
+        "confidence": 0.95,
+        "dataAgeDays": 0,
+        "history": [1650, 1680, 1720, 1750, 1780, 1820, 1850]
+      },
+      {
+        "marketId": "nashik_dindori",
+        "modalPrice": 1720,
+        "minPrice": 1100,
+        "maxPrice": 2200,
+        "arrivalsQntl": 3200,
+        "trend": "STABLE",
+        "trendAdjustment": 0.01,
+        "confidence": 0.91,
+        "dataAgeDays": 0,
+        "history": [1690, 1700, 1710, 1700, 1715, 1720, 1720]
+      },
+      {
+        "marketId": "lasalgaon_mandi",
+        "modalPrice": 1780,
+        "minPrice": 1150,
+        "maxPrice": 2300,
+        "arrivalsQntl": 4500,
+        "trend": "UP",
+        "trendAdjustment": 0.03,
+        "confidence": 0.92,
+        "dataAgeDays": 0,
+        "history": [1680, 1700, 1710, 1730, 1740, 1760, 1780]
+      },
+      {
+        "marketId": "pune_gultekdi",
+        "modalPrice": 2350,
+        "minPrice": 1500,
+        "maxPrice": 2900,
+        "arrivalsQntl": 8200,
+        "trend": "UP",
+        "trendAdjustment": 0.06,
+        "confidence": 0.96,
+        "dataAgeDays": 0,
+        "history": [2050, 2100, 2150, 2200, 2250, 2300, 2350]
+      },
+      {
+        "marketId": "vashi_apmc",
+        "modalPrice": 2600,
+        "minPrice": 1700,
+        "maxPrice": 3200,
+        "arrivalsQntl": 16000,
+        "trend": "UP",
+        "trendAdjustment": 0.05,
+        "confidence": 0.97,
+        "dataAgeDays": 0,
+        "history": [2350, 2400, 2420, 2480, 2520, 2560, 2600]
+      }
+    ],
+    "soybean": [
+      {
+        "marketId": "indore_choithram",
+        "modalPrice": 4650,
+        "minPrice": 4200,
+        "maxPrice": 4900,
+        "arrivalsQntl": 22000,
+        "trend": "UP",
+        "trendAdjustment": 0.02,
+        "confidence": 0.98,
+        "dataAgeDays": 0,
+        "history": [4520, 4550, 4580, 4600, 4620, 4640, 4650]
+      },
+      {
+        "marketId": "dewas_mandi",
+        "modalPrice": 4580,
+        "minPrice": 4150,
+        "maxPrice": 4820,
+        "arrivalsQntl": 11000,
+        "trend": "STABLE",
+        "trendAdjustment": 0.005,
+        "confidence": 0.93,
+        "dataAgeDays": 0,
+        "history": [4560, 4570, 4560, 4580, 4575, 4580, 4580]
+      },
+      {
+        "marketId": "ujjain_mandi",
+        "modalPrice": 4620,
+        "minPrice": 4180,
+        "maxPrice": 4860,
+        "arrivalsQntl": 14000,
+        "trend": "UP",
+        "trendAdjustment": 0.015,
+        "confidence": 0.95,
+        "dataAgeDays": 0,
+        "history": [4550, 4570, 4580, 4600, 4600, 4610, 4620]
+      },
+      {
+        "marketId": "ahmednagar_mandi",
+        "modalPrice": 4480,
+        "minPrice": 4050,
+        "maxPrice": 4700,
+        "arrivalsQntl": 5500,
+        "trend": "DOWN",
+        "trendAdjustment": -0.015,
+        "confidence": 0.91,
+        "dataAgeDays": 0,
+        "history": [4560, 4540, 4520, 4500, 4490, 4480, 4480]
+      }
+    ],
+    "wheat": [
+      {
+        "marketId": "indore_choithram",
+        "modalPrice": 2720,
+        "minPrice": 2400,
+        "maxPrice": 2950,
+        "arrivalsQntl": 17500,
+        "trend": "UP",
+        "trendAdjustment": 0.015,
+        "confidence": 0.96,
+        "dataAgeDays": 0,
+        "history": [2660, 2670, 2690, 2700, 2710, 2715, 2720]
+      },
+      {
+        "marketId": "dewas_mandi",
+        "modalPrice": 2690,
+        "minPrice": 2350,
+        "maxPrice": 2900,
+        "arrivalsQntl": 9400,
+        "trend": "STABLE",
+        "trendAdjustment": 0.00,
+        "confidence": 0.93,
+        "dataAgeDays": 0,
+        "history": [2680, 2685, 2690, 2690, 2685, 2690, 2690]
+      },
+      {
+        "marketId": "ujjain_mandi",
+        "modalPrice": 2740,
+        "minPrice": 2420,
+        "maxPrice": 2980,
+        "arrivalsQntl": 12800,
+        "trend": "UP",
+        "trendAdjustment": 0.02,
+        "confidence": 0.95,
+        "dataAgeDays": 0,
+        "history": [2680, 2690, 2705, 2715, 2725, 2735, 2740]
+      },
+      {
+        "marketId": "pune_gultekdi",
+        "modalPrice": 2880,
+        "minPrice": 2500,
+        "maxPrice": 3150,
+        "arrivalsQntl": 6000,
+        "trend": "STABLE",
+        "trendAdjustment": 0.005,
+        "confidence": 0.92,
+        "dataAgeDays": 1,
+        "history": [2860, 2870, 2870, 2880, 2875, 2880, 2880]
+      }
+    ],
+    "potato": [
+      {
+        "marketId": "indore_choithram",
+        "modalPrice": 1640,
+        "minPrice": 1200,
+        "maxPrice": 2000,
+        "arrivalsQntl": 19000,
+        "trend": "DOWN",
+        "trendAdjustment": -0.02,
+        "confidence": 0.95,
+        "dataAgeDays": 0,
+        "history": [1720, 1700, 1680, 1660, 1650, 1640, 1640]
+      },
+      {
+        "marketId": "dewas_mandi",
+        "modalPrice": 1580,
+        "minPrice": 1150,
+        "maxPrice": 1920,
+        "arrivalsQntl": 6500,
+        "trend": "DOWN",
+        "trendAdjustment": -0.025,
+        "confidence": 0.91,
+        "dataAgeDays": 0,
+        "history": [1670, 1650, 1620, 1600, 1590, 1580, 1580]
+      },
+      {
+        "marketId": "pune_gultekdi",
+        "modalPrice": 1980,
+        "minPrice": 1400,
+        "maxPrice": 2400,
+        "arrivalsQntl": 10500,
+        "trend": "STABLE",
+        "trendAdjustment": 0.005,
+        "confidence": 0.94,
+        "dataAgeDays": 0,
+        "history": [1960, 1970, 1970, 1980, 1975, 1980, 1980]
+      },
+      {
+        "marketId": "vashi_apmc",
+        "modalPrice": 2150,
+        "minPrice": 1550,
+        "maxPrice": 2650,
+        "arrivalsQntl": 18000,
+        "trend": "UP",
+        "trendAdjustment": 0.025,
+        "confidence": 0.96,
+        "dataAgeDays": 0,
+        "history": [2060, 2080, 2100, 2110, 2130, 2140, 2150]
+      }
+    ],
+    "gram_chana": [
+      {
+        "marketId": "indore_choithram",
+        "modalPrice": 5850,
+        "minPrice": 5200,
+        "maxPrice": 6200,
+        "arrivalsQntl": 11000,
+        "trend": "UP",
+        "trendAdjustment": 0.018,
+        "confidence": 0.95,
+        "dataAgeDays": 0,
+        "history": [5720, 5750, 5780, 5800, 5820, 5840, 5850]
+      },
+      {
+        "marketId": "ujjain_mandi",
+        "modalPrice": 5820,
+        "minPrice": 5150,
+        "maxPrice": 6150,
+        "arrivalsQntl": 8500,
+        "trend": "UP",
+        "trendAdjustment": 0.015,
+        "confidence": 0.93,
+        "dataAgeDays": 0,
+        "history": [5700, 5720, 5750, 5780, 5800, 5810, 5820]
+      },
+      {
+        "marketId": "ahmednagar_mandi",
+        "modalPrice": 5780,
+        "minPrice": 5100,
+        "maxPrice": 6100,
+        "arrivalsQntl": 4200,
+        "trend": "STABLE",
+        "trendAdjustment": 0.00,
+        "confidence": 0.90,
+        "dataAgeDays": 1,
+        "history": [5790, 5780, 5780, 5770, 5780, 5780, 5780]
+      }
+    ],
+    "cotton": [
+      {
+        "marketId": "ahmednagar_mandi",
+        "modalPrice": 7250,
+        "minPrice": 6500,
+        "maxPrice": 7600,
+        "arrivalsQntl": 3800,
+        "trend": "DOWN",
+        "trendAdjustment": -0.015,
+        "confidence": 0.91,
+        "dataAgeDays": 0,
+        "history": [7400, 7360, 7320, 7300, 7280, 7260, 7250]
+      },
+      {
+        "marketId": "yeola_mandi",
+        "modalPrice": 7180,
+        "minPrice": 6400,
+        "maxPrice": 7500,
+        "arrivalsQntl": 2900,
+        "trend": "DOWN",
+        "trendAdjustment": -0.02,
+        "confidence": 0.88,
+        "dataAgeDays": 0,
+        "history": [7350, 7300, 7270, 7240, 7200, 7190, 7180]
+      },
+      {
+        "marketId": "indore_choithram",
+        "modalPrice": 7380,
+        "minPrice": 6600,
+        "maxPrice": 7750,
+        "arrivalsQntl": 5200,
+        "trend": "STABLE",
+        "trendAdjustment": 0.005,
+        "confidence": 0.94,
+        "dataAgeDays": 0,
+        "history": [7340, 7350, 7360, 7360, 7370, 7380, 7380]
+      }
+    ],
+    "maize": [
+      {
+        "marketId": "yeola_mandi",
+        "modalPrice": 2180,
+        "minPrice": 1800,
+        "maxPrice": 2350,
+        "arrivalsQntl": 5100,
+        "trend": "UP",
+        "trendAdjustment": 0.02,
+        "confidence": 0.92,
+        "dataAgeDays": 0,
+        "history": [2100, 2120, 2140, 2150, 2160, 2170, 2180]
+      },
+      {
+        "marketId": "lasalgaon_mandi",
+        "modalPrice": 2150,
+        "minPrice": 1780,
+        "maxPrice": 2320,
+        "arrivalsQntl": 4300,
+        "trend": "STABLE",
+        "trendAdjustment": 0.005,
+        "confidence": 0.90,
+        "dataAgeDays": 0,
+        "history": [2140, 2140, 2150, 2145, 2150, 2150, 2150]
+      },
+      {
+        "marketId": "dewas_mandi",
+        "modalPrice": 2220,
+        "minPrice": 1850,
+        "maxPrice": 2400,
+        "arrivalsQntl": 6800,
+        "trend": "UP",
+        "trendAdjustment": 0.025,
+        "confidence": 0.93,
+        "dataAgeDays": 0,
+        "history": [2140, 2160, 2180, 2190, 2200, 2210, 2220]
+      }
+    ]
+  }
+}

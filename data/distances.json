@@ -1,0 +1,100 @@
+{
+  "roadWindingFactor": 1.28,
+  "farmerOrigins": [
+    {
+      "id": "niphad_farm",
+      "name": "Niphad Farm Cluster (Nashik)",
+      "lat": 20.0898,
+      "lon": 74.1089,
+      "description": "Heart of Maharashtra Onion & Grape belt",
+      "distancesKm": {
+        "lasalgaon_mandi": 15,
+        "pimpalgaon_mandi": 19,
+        "nashik_dindori": 32,
+        "yeola_mandi": 44,
+        "pune_gultekdi": 215,
+        "vashi_apmc": 205,
+        "ahmednagar_mandi": 140,
+        "indore_choithram": 420,
+        "dewas_mandi": 450,
+        "ujjain_mandi": 470
+      }
+    },
+    {
+      "id": "yeola_farm",
+      "name": "Yeola Rural Farm",
+      "lat": 20.0417,
+      "lon": 74.4867,
+      "description": "Onion, Maize and Cotton cultivation area",
+      "distancesKm": {
+        "lasalgaon_mandi": 28,
+        "pimpalgaon_mandi": 54,
+        "nashik_dindori": 72,
+        "yeola_mandi": 6,
+        "pune_gultekdi": 235,
+        "vashi_apmc": 240,
+        "ahmednagar_mandi": 115,
+        "indore_choithram": 385,
+        "dewas_mandi": 415,
+        "ujjain_mandi": 435
+      }
+    },
+    {
+      "id": "dindori_farm",
+      "name": "Dindori Valley Farm",
+      "lat": 20.2036,
+      "lon": 73.8344,
+      "description": "High yield Tomato, Vegetable and Onion belt",
+      "distancesKm": {
+        "lasalgaon_mandi": 45,
+        "pimpalgaon_mandi": 18,
+        "nashik_dindori": 5,
+        "yeola_mandi": 75,
+        "pune_gultekdi": 228,
+        "vashi_apmc": 188,
+        "ahmednagar_mandi": 165,
+        "indore_choithram": 410,
+        "dewas_mandi": 440,
+        "ujjain_mandi": 460
+      }
+    },
+    {
+      "id": "shirur_farm",
+      "name": "Shirur Farm Cluster (Pune)",
+      "lat": 18.8258,
+      "lon": 74.3789,
+      "description": "Vegetable, Onion and Sugarcane zone",
+      "distancesKm": {
+        "lasalgaon_mandi": 170,
+        "pimpalgaon_mandi": 185,
+        "nashik_dindori": 200,
+        "yeola_mandi": 160,
+        "pune_gultekdi": 65,
+        "vashi_apmc": 175,
+        "ahmednagar_mandi": 55,
+        "indore_choithram": 530,
+        "dewas_mandi": 560,
+        "ujjain_mandi": 580
+      }
+    },
+    {
+      "id": "sanwer_farm",
+      "name": "Sanwer Farm Belt (Indore)",
+      "lat": 22.9772,
+      "lon": 75.8344,
+      "description": "Soybean, Potato, Garlic and Wheat hub",
+      "distancesKm": {
+        "lasalgaon_mandi": 410,
+        "pimpalgaon_mandi": 420,
+        "nashik_dindori": 430,
+        "yeola_mandi": 390,
+        "pune_gultekdi": 595,
+        "vashi_apmc": 580,
+        "ahmednagar_mandi": 520,
+        "indore_choithram": 34,
+        "dewas_mandi": 28,
+        "ujjain_mandi": 32
+      }
+    }
+  ]
+}

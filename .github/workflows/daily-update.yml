@@ -1,0 +1,38 @@
+name: MandiMitra Daily Mandi Price Sync
+
+on:
+  schedule:
+    # Run daily at 02:00 UTC (07:30 IST) when official mandi prices are published
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-mandi-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Fetch daily-updated official mandi data
+        env:
+          DATA_GOV_IN_API_KEY: ${{ secrets.DATA_GOV_IN_API_KEY }}
+          AGMARKNET_API_KEY: ${{ secrets.AGMARKNET_API_KEY }}
+        run: |
+          python scripts/fetch_prices.py
+          python scripts/build_distances.py
+
+      - name: Commit and push if updated
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "MandiMitra AI Data Bot"
+          git add data/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore(data): sync daily-updated official mandi data [skip ci]" && git push)
