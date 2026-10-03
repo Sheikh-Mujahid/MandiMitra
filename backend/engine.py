@@ -115,23 +115,23 @@ def rank_markets(
     cost_per_km = rate_per_km if (rate_per_km is not None and rate_per_km > 0) else VEHICLE_BASE_RATES.get(chosen_vehicle_type, 30.0)
     trip_multiplier = 2 if round_trip else 1
 
-    # Map markets by id
-    market_map = {m["id"]: m for m in markets}
+    # Map markets by market_id or id
+    market_map = {(m.get("market_id") or m.get("id")): m for m in markets}
     
     # Resolve farmer location coordinates
-    origin_lat, origin_lon = 20.0898, 74.1089 # default Niphad
+    origin_lat, origin_lon = 20.9320, 77.7523 # default Amravati / Morshi
     precomputed_distances = {}
     
     if isinstance(location, str) and distances_data:
         for origin in distances_data.get("farmerOrigins", []):
-            if origin["id"] == location:
-                origin_lat = origin["lat"]
-                origin_lon = origin["lon"]
+            if origin.get("id") == location or origin.get("location_id") == location:
+                origin_lat = origin.get("latitude") or origin.get("lat", origin_lat)
+                origin_lon = origin.get("longitude") or origin.get("lon", origin_lon)
                 precomputed_distances = origin.get("distancesKm", {})
                 break
     elif isinstance(location, dict):
-        origin_lat = location.get("lat", origin_lat)
-        origin_lon = location.get("lon", origin_lon)
+        origin_lat = location.get("latitude") or location.get("lat", origin_lat)
+        origin_lon = location.get("longitude") or location.get("lon", origin_lon)
         if "distancesKm" in location:
             precomputed_distances = location["distancesKm"]
 
@@ -147,7 +147,9 @@ def rank_markets(
         if m_id in precomputed_distances:
             distance_km = float(precomputed_distances[m_id])
         else:
-            distance_km = calculate_haversine_road_distance(origin_lat, origin_lon, market["lat"], market["lon"])
+            m_lat = market.get("latitude") or market.get("lat")
+            m_lon = market.get("longitude") or market.get("lon")
+            distance_km = calculate_haversine_road_distance(origin_lat, origin_lon, m_lat, m_lon)
 
         # 2. Expected Price calculation
         modal_price = float(prec["modalPrice"])

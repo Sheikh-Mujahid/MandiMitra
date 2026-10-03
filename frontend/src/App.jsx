@@ -33,11 +33,11 @@ export default function App() {
   const t = translations[lang] || translations.en;
 
   const defaultAssumptions = {
-    crop: 'onion',
-    quantity: 50,
-    location: 'niphad_farm',
+    crop: pricesData.crops[0]?.id || 'soybean',
+    quantity: 60,
+    location: distancesData.farmerOrigins[0]?.id || 'morshi_town',
     vehicle: 'auto',
-    ratePerKm: 32,
+    ratePerKm: 35,
     priceAdjust: 0,
     roundTrip: false,
     extraCosts: {
@@ -45,7 +45,7 @@ export default function App() {
       marketFeePercent: 1.0,
       commissionPercent: 0.0,
       weighmentPerQntl: 6.0,
-      spoilageFactor: 0.00015
+      spoilageFactor: 0.00002
     }
   };
 
@@ -73,13 +73,13 @@ export default function App() {
   const cropDisplayName = lang === 'mr' ? currentCropObj.nameMr : lang === 'hi' ? currentCropObj.nameHi : currentCropObj.name;
 
   const handleApplyPreset = (presetKey) => {
-    if (presetKey === 'onion_nashik') {
+    if (presetKey === 'soybean_morshi' || presetKey === 'preset1') {
       setAssumptions({
-        crop: 'onion',
-        quantity: 50,
-        location: 'niphad_farm',
+        crop: 'soybean',
+        quantity: 60,
+        location: 'morshi_town',
         vehicle: 'auto',
-        ratePerKm: 32,
+        ratePerKm: 35,
         priceAdjust: 0,
         roundTrip: false,
         extraCosts: {
@@ -87,40 +87,40 @@ export default function App() {
           marketFeePercent: 1.05,
           commissionPercent: 0.0,
           weighmentPerQntl: 6.0,
-          spoilageFactor: 0.00015
+          spoilageFactor: 0.00002
         }
       });
-    } else if (presetKey === 'tomato_dindori') {
+    } else if (presetKey === 'wheat_katol' || presetKey === 'preset2') {
       setAssumptions({
-        crop: 'tomato',
-        quantity: 30,
-        location: 'dindori_farm',
+        crop: 'wheat',
+        quantity: 50,
+        location: 'katol_town',
         vehicle: 'tata407',
-        ratePerKm: 30,
+        ratePerKm: 32,
         priceAdjust: 0,
         roundTrip: false,
         extraCosts: {
           loadingPerQntl: 10.0,
           marketFeePercent: 1.0,
           commissionPercent: 0.0,
-          weighmentPerQntl: 5.0,
-          spoilageFactor: 0.00045
+          weighmentPerQntl: 5.5,
+          spoilageFactor: 0.00002
         }
       });
-    } else if (presetKey === 'soybean_indore') {
+    } else if (presetKey === 'gram_karanja' || presetKey === 'preset3') {
       setAssumptions({
-        crop: 'soybean',
-        quantity: 60,
-        location: 'sanwer_farm',
-        vehicle: 'truck14ft',
-        ratePerKm: 35,
+        crop: 'gram_chana',
+        quantity: 40,
+        location: 'karanja_lad',
+        vehicle: 'tractor',
+        ratePerKm: 28,
         priceAdjust: 0,
         roundTrip: false,
         extraCosts: {
-          loadingPerQntl: 13.0,
-          marketFeePercent: 1.5,
+          loadingPerQntl: 11.0,
+          marketFeePercent: 1.0,
           commissionPercent: 0.0,
-          weighmentPerQntl: 6.5,
+          weighmentPerQntl: 5.0,
           spoilageFactor: 0.00002
         }
       });

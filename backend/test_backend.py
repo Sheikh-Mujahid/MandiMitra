@@ -94,9 +94,9 @@ def test_core_formula_mathematical_consistency():
 
 def test_rank_api_endpoint():
     payload = {
-        "crop": "onion",
+        "crop": "soybean",
         "quantity": 50.0,
-        "location": "niphad_farm",
+        "location": "morshi_town",
         "vehicle": "auto",
         "ratePerKm": 30.0,
         "priceAdjust": 5.0, # +5%

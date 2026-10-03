@@ -187,11 +187,12 @@ export function rankMarkets({
   customPrices = null,
   customDistances = null
 } = {}) {
-  const markets = customMarkets || marketsData;
+  const rawMarkets = customMarkets || marketsData;
+  const markets = Array.isArray(rawMarkets) ? rawMarkets : (rawMarkets.markets || []);
   const prices = customPrices || pricesData;
   const distances = customDistances || distancesData;
 
-  const cropKey = (crop || 'onion').toLowerCase();
+  const cropKey = (crop || 'soybean').toLowerCase();
   const cropPriceRecords = prices.marketPrices?.[cropKey] || [];
   const cropMetadata = prices.crops?.find((c) => c.id === cropKey) || {
     name: crop,
@@ -211,27 +212,28 @@ export function rankMarkets({
       : config.defaultRatePerKm;
   const tripMultiplier = roundTrip ? 2 : 1;
 
-  // Map markets
+  // Map markets by market_id / id
   const marketMap = new Map();
   for (const m of markets) {
-    marketMap.set(m.id, m);
+    const mId = m.market_id || m.id;
+    marketMap.set(mId, m);
   }
 
   // Resolve farmer origin coordinates & precomputed distances
-  let originLat = 20.0898;
-  let originLon = 74.1089;
+  let originLat = 20.9320;
+  let originLon = 77.7523;
   let precomputedDistances = {};
 
   if (typeof location === 'string') {
-    const origin = distances.farmerOrigins?.find((o) => o.id === location);
+    const origin = distances.farmerOrigins?.find((o) => o.id === location || o.location_id === location);
     if (origin) {
-      originLat = origin.lat;
-      originLon = origin.lon;
+      originLat = origin.lat || origin.latitude;
+      originLon = origin.lon || origin.longitude;
       precomputedDistances = origin.distancesKm || {};
     }
   } else if (location && typeof location === 'object') {
-    originLat = location.lat ?? originLat;
-    originLon = location.lon ?? originLon;
+    originLat = location.lat ?? location.latitude ?? originLat;
+    originLon = location.lon ?? location.longitude ?? originLon;
     if (location.distancesKm) {
       precomputedDistances = location.distancesKm;
     }
@@ -244,16 +246,20 @@ export function rankMarkets({
     if (!market) continue;
 
     // 1. Distance Calculation
+    const mKey = market.market_id || market.id;
+    const mLat = market.latitude ?? market.lat;
+    const mLon = market.longitude ?? market.lon;
+
     let distanceKm = 0;
-    if (precomputedDistances[market.id] !== undefined) {
-      distanceKm = Number(precomputedDistances[market.id]);
+    if (precomputedDistances[mKey] !== undefined) {
+      distanceKm = Number(precomputedDistances[mKey]);
     } else {
       distanceKm = calculateRoadDistance(
         originLat,
         originLon,
-        market.lat,
-        market.lon,
-        distances.roadWindingFactor || 1.28
+        mLat,
+        mLon,
+        distances.roadWindingFactor || 1.3
       );
     }
 

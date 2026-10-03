@@ -40,9 +40,9 @@ def load_json_file(filename: str) -> Any:
         return json.load(f)
 
 class RankRequest(BaseModel):
-    crop: str = Field("onion", description="Crop identifier")
+    crop: str = Field("soybean", description="Crop identifier")
     quantity: float = Field(50.0, ge=0.1, description="Quantity in quintals")
-    location: Any = Field("niphad_farm", description="Location ID or lat/lon dict")
+    location: Any = Field("morshi_town", description="Location ID or lat/lon dict")
     vehicle: str = Field("auto", description="Vehicle type (auto, pickup, tata407, tractor, truck14ft, truck6wheeler)")
     ratePerKm: Optional[float] = Field(None, description="Transport rate in ₹/km")
     priceAdjust: float = Field(0.0, description="Hypothetical price adjustment in % or decimal")
@@ -66,7 +66,8 @@ def get_system_status():
 
 @app.get("/api/markets")
 def get_all_markets():
-    return load_json_file("markets.json")
+    raw = load_json_file("markets.json")
+    return raw.get("markets", raw) if isinstance(raw, dict) else raw
 
 @app.get("/api/crops")
 def get_crops():
@@ -74,7 +75,7 @@ def get_crops():
     return prices_data.get("crops", [])
 
 @app.get("/api/prices")
-def get_prices(crop: str = Query("onion", description="Crop ID")):
+def get_prices(crop: str = Query("soybean", description="Crop ID")):
     prices_data = load_json_file("prices.json")
     crop_prices = prices_data.get("marketPrices", {}).get(crop.lower())
     if not crop_prices:
@@ -93,7 +94,8 @@ def get_farmer_origins():
 
 @app.post("/api/rank")
 def rank_mandi_recommendations(req: RankRequest):
-    markets = load_json_file("markets.json")
+    raw_markets = load_json_file("markets.json")
+    markets = raw_markets.get("markets", raw_markets) if isinstance(raw_markets, dict) else raw_markets
     prices_data = load_json_file("prices.json")
     distances_data = load_json_file("distances.json")
 

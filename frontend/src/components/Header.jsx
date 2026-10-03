@@ -51,25 +51,25 @@ export default function Header({
                 {t.presetsLabel}
               </span>
               <button
-                onClick={() => onApplyPreset('onion_nashik')}
+                onClick={() => onApplyPreset('soybean_morshi')}
                 className="px-2.5 py-1 rounded hover:bg-emerald-800 text-emerald-100 transition-colors"
-                title="50 Qntl Onion from Niphad"
-              >
-                {t.presetOnion}
-              </button>
-              <button
-                onClick={() => onApplyPreset('tomato_dindori')}
-                className="px-2.5 py-1 rounded hover:bg-emerald-800 text-emerald-100 transition-colors"
-                title="30 Qntl Tomato from Dindori"
-              >
-                {t.presetTomato}
-              </button>
-              <button
-                onClick={() => onApplyPreset('soybean_indore')}
-                className="px-2.5 py-1 rounded hover:bg-emerald-800 text-emerald-100 transition-colors"
-                title="60 Qntl Soybean from Sanwer"
+                title="60 Qntl Soybean from Morshi"
               >
                 {t.presetSoybean}
+              </button>
+              <button
+                onClick={() => onApplyPreset('wheat_katol')}
+                className="px-2.5 py-1 rounded hover:bg-emerald-800 text-emerald-100 transition-colors"
+                title="50 Qntl Wheat from Katol"
+              >
+                {t.presetWheat}
+              </button>
+              <button
+                onClick={() => onApplyPreset('gram_karanja')}
+                className="px-2.5 py-1 rounded hover:bg-emerald-800 text-emerald-100 transition-colors"
+                title="40 Qntl Gram from Karanja Lad"
+              >
+                {t.presetGram}
               </button>
             </div>
 

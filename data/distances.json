@@ -1,99 +1,422 @@
 {
-  "roadWindingFactor": 1.28,
+  "roadWindingFactor": 1.3,
+  "calculationMethods": [
+    "haversine_fallback",
+    "osrm"
+  ],
   "farmerOrigins": [
     {
-      "id": "niphad_farm",
-      "name": "Niphad Farm Cluster (Nashik)",
-      "lat": 20.0898,
-      "lon": 74.1089,
-      "description": "Heart of Maharashtra Onion & Grape belt",
+      "id": "morshi_town",
+      "location_id": "morshi_town",
+      "name": "Morshi Rural (Amravati)",
+      "district": "Amravati",
+      "lat": 21.3178,
+      "lon": 78.0125,
+      "description": "Soybean and Orange heartland near Upper Wardha Dam",
       "distancesKm": {
-        "lasalgaon_mandi": 15,
-        "pimpalgaon_mandi": 19,
-        "nashik_dindori": 32,
-        "yeola_mandi": 44,
-        "pune_gultekdi": 215,
-        "vashi_apmc": 205,
-        "ahmednagar_mandi": 140,
-        "indore_choithram": 420,
-        "dewas_mandi": 450,
-        "ujjain_mandi": 470
+        "amravati_apmc": 54.2,
+        "akola_apmc": 147.8,
+        "nagpur_apmc": 155.2,
+        "yavatmal_apmc": 127.2,
+        "washim_apmc": 198.3,
+        "buldhana_apmc": 197.0,
+        "wardha_apmc": 116.7,
+        "achalpur_apmc": 60.0
+      },
+      "routeDetails": {
+        "amravati_apmc": {
+          "distanceKm": 54.2,
+          "durationMinutes": 42,
+          "durationHours": 0.7,
+          "method": "osrm"
+        },
+        "akola_apmc": {
+          "distanceKm": 147.8,
+          "durationMinutes": 112,
+          "durationHours": 1.9,
+          "method": "osrm"
+        },
+        "nagpur_apmc": {
+          "distanceKm": 155.2,
+          "durationMinutes": 140,
+          "durationHours": 2.3,
+          "method": "osrm"
+        },
+        "yavatmal_apmc": {
+          "distanceKm": 127.2,
+          "durationMinutes": 122,
+          "durationHours": 2.0,
+          "method": "osrm"
+        },
+        "washim_apmc": {
+          "distanceKm": 198.3,
+          "durationMinutes": 161,
+          "durationHours": 2.7,
+          "method": "osrm"
+        },
+        "buldhana_apmc": {
+          "distanceKm": 197.0,
+          "durationMinutes": 155,
+          "durationHours": 2.6,
+          "method": "osrm"
+        },
+        "wardha_apmc": {
+          "distanceKm": 116.7,
+          "durationMinutes": 104,
+          "durationHours": 1.7,
+          "method": "osrm"
+        },
+        "achalpur_apmc": {
+          "distanceKm": 60.0,
+          "durationMinutes": 59,
+          "durationHours": 1.0,
+          "method": "osrm"
+        }
       }
     },
     {
-      "id": "yeola_farm",
-      "name": "Yeola Rural Farm",
-      "lat": 20.0417,
-      "lon": 74.4867,
-      "description": "Onion, Maize and Cotton cultivation area",
+      "id": "karanja_lad",
+      "location_id": "karanja_lad",
+      "name": "Karanja Lad (Washim)",
+      "district": "Washim",
+      "lat": 20.4852,
+      "lon": 77.492,
+      "description": "High yield Soybean, Gram and Tur farming zone",
       "distancesKm": {
-        "lasalgaon_mandi": 28,
-        "pimpalgaon_mandi": 54,
-        "nashik_dindori": 72,
-        "yeola_mandi": 6,
-        "pune_gultekdi": 235,
-        "vashi_apmc": 240,
-        "ahmednagar_mandi": 115,
-        "indore_choithram": 385,
-        "dewas_mandi": 415,
-        "ujjain_mandi": 435
+        "amravati_apmc": 67.9,
+        "akola_apmc": 71.8,
+        "nagpur_apmc": 221.7,
+        "yavatmal_apmc": 81.5,
+        "washim_apmc": 88.6,
+        "buldhana_apmc": 121.0,
+        "wardha_apmc": 139.5,
+        "achalpur_apmc": 110.8
+      },
+      "routeDetails": {
+        "amravati_apmc": {
+          "distanceKm": 67.9,
+          "durationMinutes": 65,
+          "durationHours": 1.1,
+          "method": "osrm"
+        },
+        "akola_apmc": {
+          "distanceKm": 71.8,
+          "durationMinutes": 56,
+          "durationHours": 0.9,
+          "method": "osrm"
+        },
+        "nagpur_apmc": {
+          "distanceKm": 221.7,
+          "durationMinutes": 152,
+          "durationHours": 2.5,
+          "method": "osrm"
+        },
+        "yavatmal_apmc": {
+          "distanceKm": 81.5,
+          "durationMinutes": 70,
+          "durationHours": 1.2,
+          "method": "osrm"
+        },
+        "washim_apmc": {
+          "distanceKm": 88.6,
+          "durationMinutes": 72,
+          "durationHours": 1.2,
+          "method": "osrm"
+        },
+        "buldhana_apmc": {
+          "distanceKm": 121.0,
+          "durationMinutes": 99,
+          "durationHours": 1.6,
+          "method": "osrm"
+        },
+        "wardha_apmc": {
+          "distanceKm": 139.5,
+          "durationMinutes": 94,
+          "durationHours": 1.6,
+          "method": "osrm"
+        },
+        "achalpur_apmc": {
+          "distanceKm": 110.8,
+          "durationMinutes": 95,
+          "durationHours": 1.6,
+          "method": "osrm"
+        }
       }
     },
     {
-      "id": "dindori_farm",
-      "name": "Dindori Valley Farm",
-      "lat": 20.2036,
-      "lon": 73.8344,
-      "description": "High yield Tomato, Vegetable and Onion belt",
+      "id": "hinganghat_town",
+      "location_id": "hinganghat_town",
+      "name": "Hinganghat (Wardha)",
+      "district": "Wardha",
+      "lat": 20.5568,
+      "lon": 78.8354,
+      "description": "Fertile Vena river basin Cotton and Soybean belt",
       "distancesKm": {
-        "lasalgaon_mandi": 45,
-        "pimpalgaon_mandi": 18,
-        "nashik_dindori": 5,
-        "yeola_mandi": 75,
-        "pune_gultekdi": 228,
-        "vashi_apmc": 188,
-        "ahmednagar_mandi": 165,
-        "indore_choithram": 410,
-        "dewas_mandi": 440,
-        "ujjain_mandi": 460
+        "amravati_apmc": 147.8,
+        "akola_apmc": 243.9,
+        "nagpur_apmc": 85.4,
+        "yavatmal_apmc": 94.9,
+        "washim_apmc": 248.1,
+        "buldhana_apmc": 288.2,
+        "wardha_apmc": 38.5,
+        "achalpur_apmc": 184.1
+      },
+      "routeDetails": {
+        "amravati_apmc": {
+          "distanceKm": 147.8,
+          "durationMinutes": 146,
+          "durationHours": 2.4,
+          "method": "osrm"
+        },
+        "akola_apmc": {
+          "distanceKm": 243.9,
+          "durationMinutes": 192,
+          "durationHours": 3.2,
+          "method": "osrm"
+        },
+        "nagpur_apmc": {
+          "distanceKm": 85.4,
+          "durationMinutes": 84,
+          "durationHours": 1.4,
+          "method": "osrm"
+        },
+        "yavatmal_apmc": {
+          "distanceKm": 94.9,
+          "durationMinutes": 91,
+          "durationHours": 1.5,
+          "method": "osrm"
+        },
+        "washim_apmc": {
+          "distanceKm": 248.1,
+          "durationMinutes": 201,
+          "durationHours": 3.4,
+          "method": "osrm"
+        },
+        "buldhana_apmc": {
+          "distanceKm": 288.2,
+          "durationMinutes": 231,
+          "durationHours": 3.9,
+          "method": "osrm"
+        },
+        "wardha_apmc": {
+          "distanceKm": 38.5,
+          "durationMinutes": 56,
+          "durationHours": 0.9,
+          "method": "osrm"
+        },
+        "achalpur_apmc": {
+          "distanceKm": 184.1,
+          "durationMinutes": 202,
+          "durationHours": 3.4,
+          "method": "osrm"
+        }
       }
     },
     {
-      "id": "shirur_farm",
-      "name": "Shirur Farm Cluster (Pune)",
-      "lat": 18.8258,
-      "lon": 74.3789,
-      "description": "Vegetable, Onion and Sugarcane zone",
+      "id": "pusad_town",
+      "location_id": "pusad_town",
+      "name": "Pusad (Yavatmal)",
+      "district": "Yavatmal",
+      "lat": 19.9077,
+      "lon": 77.5815,
+      "description": "Key agricultural trade town in southern Vidarbha",
       "distancesKm": {
-        "lasalgaon_mandi": 170,
-        "pimpalgaon_mandi": 185,
-        "nashik_dindori": 200,
-        "yeola_mandi": 160,
-        "pune_gultekdi": 65,
-        "vashi_apmc": 175,
-        "ahmednagar_mandi": 55,
-        "indore_choithram": 530,
-        "dewas_mandi": 560,
-        "ujjain_mandi": 580
+        "amravati_apmc": 151.7,
+        "akola_apmc": 139.1,
+        "nagpur_apmc": 305.6,
+        "yavatmal_apmc": 95.6,
+        "washim_apmc": 62.7,
+        "buldhana_apmc": 169.4,
+        "wardha_apmc": 165.5,
+        "achalpur_apmc": 194.6
+      },
+      "routeDetails": {
+        "amravati_apmc": {
+          "distanceKm": 151.7,
+          "durationMinutes": 137,
+          "durationHours": 2.3,
+          "method": "osrm"
+        },
+        "akola_apmc": {
+          "distanceKm": 139.1,
+          "durationMinutes": 112,
+          "durationHours": 1.9,
+          "method": "osrm"
+        },
+        "nagpur_apmc": {
+          "distanceKm": 305.6,
+          "durationMinutes": 224,
+          "durationHours": 3.7,
+          "method": "osrm"
+        },
+        "yavatmal_apmc": {
+          "distanceKm": 95.6,
+          "durationMinutes": 93,
+          "durationHours": 1.6,
+          "method": "osrm"
+        },
+        "washim_apmc": {
+          "distanceKm": 62.7,
+          "durationMinutes": 58,
+          "durationHours": 1.0,
+          "method": "osrm"
+        },
+        "buldhana_apmc": {
+          "distanceKm": 169.4,
+          "durationMinutes": 146,
+          "durationHours": 2.4,
+          "method": "osrm"
+        },
+        "wardha_apmc": {
+          "distanceKm": 165.5,
+          "durationMinutes": 157,
+          "durationHours": 2.6,
+          "method": "osrm"
+        },
+        "achalpur_apmc": {
+          "distanceKm": 194.6,
+          "durationMinutes": 167,
+          "durationHours": 2.8,
+          "method": "osrm"
+        }
       }
     },
     {
-      "id": "sanwer_farm",
-      "name": "Sanwer Farm Belt (Indore)",
-      "lat": 22.9772,
-      "lon": 75.8344,
-      "description": "Soybean, Potato, Garlic and Wheat hub",
+      "id": "katol_town",
+      "location_id": "katol_town",
+      "name": "Katol (Nagpur)",
+      "district": "Nagpur",
+      "lat": 21.2678,
+      "lon": 78.5878,
+      "description": "Grain, Wheat and Pulses intensive cultivation hub",
       "distancesKm": {
-        "lasalgaon_mandi": 410,
-        "pimpalgaon_mandi": 420,
-        "nashik_dindori": 430,
-        "yeola_mandi": 390,
-        "pune_gultekdi": 595,
-        "vashi_apmc": 580,
-        "ahmednagar_mandi": 520,
-        "indore_choithram": 34,
-        "dewas_mandi": 28,
-        "ujjain_mandi": 32
+        "amravati_apmc": 107.8,
+        "akola_apmc": 201.5,
+        "nagpur_apmc": 75.1,
+        "yavatmal_apmc": 145.5,
+        "washim_apmc": 264.3,
+        "buldhana_apmc": 250.7,
+        "wardha_apmc": 99.5,
+        "achalpur_apmc": 145.2
+      },
+      "routeDetails": {
+        "amravati_apmc": {
+          "distanceKm": 107.8,
+          "durationMinutes": 97,
+          "durationHours": 1.6,
+          "method": "osrm"
+        },
+        "akola_apmc": {
+          "distanceKm": 201.5,
+          "durationMinutes": 167,
+          "durationHours": 2.8,
+          "method": "osrm"
+        },
+        "nagpur_apmc": {
+          "distanceKm": 75.1,
+          "durationMinutes": 71,
+          "durationHours": 1.2,
+          "method": "osrm"
+        },
+        "yavatmal_apmc": {
+          "distanceKm": 145.5,
+          "durationMinutes": 141,
+          "durationHours": 2.4,
+          "method": "osrm"
+        },
+        "washim_apmc": {
+          "distanceKm": 264.3,
+          "durationMinutes": 210,
+          "durationHours": 3.5,
+          "method": "osrm"
+        },
+        "buldhana_apmc": {
+          "distanceKm": 250.7,
+          "durationMinutes": 210,
+          "durationHours": 3.5,
+          "method": "osrm"
+        },
+        "wardha_apmc": {
+          "distanceKm": 99.5,
+          "durationMinutes": 86,
+          "durationHours": 1.4,
+          "method": "osrm"
+        },
+        "achalpur_apmc": {
+          "distanceKm": 145.2,
+          "durationMinutes": 238,
+          "durationHours": 4.0,
+          "method": "haversine_fallback"
+        }
+      }
+    },
+    {
+      "id": "murtizapur_town",
+      "location_id": "murtizapur_town",
+      "name": "Murtizapur (Akola)",
+      "district": "Akola",
+      "lat": 20.7323,
+      "lon": 77.3621,
+      "description": "Central Vidarbha junction for Soybean and Gram",
+      "distancesKm": {
+        "amravati_apmc": 54.3,
+        "akola_apmc": 41.1,
+        "nagpur_apmc": 241.7,
+        "yavatmal_apmc": 119.9,
+        "washim_apmc": 108.5,
+        "buldhana_apmc": 90.3,
+        "wardha_apmc": 159.4,
+        "achalpur_apmc": 79.3
+      },
+      "routeDetails": {
+        "amravati_apmc": {
+          "distanceKm": 54.3,
+          "durationMinutes": 50,
+          "durationHours": 0.8,
+          "method": "osrm"
+        },
+        "akola_apmc": {
+          "distanceKm": 41.1,
+          "durationMinutes": 35,
+          "durationHours": 0.6,
+          "method": "osrm"
+        },
+        "nagpur_apmc": {
+          "distanceKm": 241.7,
+          "durationMinutes": 166,
+          "durationHours": 2.8,
+          "method": "osrm"
+        },
+        "yavatmal_apmc": {
+          "distanceKm": 119.9,
+          "durationMinutes": 93,
+          "durationHours": 1.6,
+          "method": "osrm"
+        },
+        "washim_apmc": {
+          "distanceKm": 108.5,
+          "durationMinutes": 86,
+          "durationHours": 1.4,
+          "method": "osrm"
+        },
+        "buldhana_apmc": {
+          "distanceKm": 90.3,
+          "durationMinutes": 77,
+          "durationHours": 1.3,
+          "method": "osrm"
+        },
+        "wardha_apmc": {
+          "distanceKm": 159.4,
+          "durationMinutes": 108,
+          "durationHours": 1.8,
+          "method": "osrm"
+        },
+        "achalpur_apmc": {
+          "distanceKm": 79.3,
+          "durationMinutes": 72,
+          "durationHours": 1.2,
+          "method": "osrm"
+        }
       }
     }
   ]

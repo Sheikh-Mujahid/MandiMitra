@@ -2,8 +2,8 @@ name: MandiMitra Daily Mandi Price Sync
 
 on:
   schedule:
-    # Run daily at 02:00 UTC (07:30 IST) when official mandi prices are published
-    - cron: '0 2 * * *'
+    # Run daily at 01:00 UTC (06:30 IST) when official mandi reports are updated
+    - cron: '0 1 * * *'
   workflow_dispatch:
 
 permissions:
@@ -22,10 +22,15 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+
       - name: Fetch daily-updated official mandi data
         env:
-          DATA_GOV_IN_API_KEY: ${{ secrets.DATA_GOV_IN_API_KEY }}
-          AGMARKNET_API_KEY: ${{ secrets.AGMARKNET_API_KEY }}
+          DATA_GOV_API_KEY: ${{ secrets.DATA_GOV_API_KEY }}
+          RESOURCE_ID: ${{ secrets.RESOURCE_ID }}
         run: |
           python scripts/fetch_prices.py
           python scripts/build_distances.py
