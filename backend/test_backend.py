@@ -12,13 +12,67 @@ def test_health_endpoint():
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
 
-def test_status_endpoint_rules():
-    response = client.get("/api/status")
+def test_data_status_endpoint():
+    response = client.get("/data-status")
     assert response.status_code == 200
     data = response.json()
-    assert data["data_freshness"] == "daily-updated official mandi data"
-    assert data["price_type"] == "MODAL"
-    assert "estimate, not guaranteed" in data["forecast_disclaimer"]
+    assert data["status"] == "online"
+    assert data["priceBasis"] == "MODAL"
+    assert data["freshnessStatus"] in ["fresh", "aging", "stale"]
+    assert "fetchTimestamp" in data
+    assert "latestRecordsByMandiCrop" in data
+    assert "Modal prices from official mandi data" in data["note"]
+
+def test_get_markets_endpoint():
+    response = client.get("/markets")
+    assert response.status_code == 200
+    data = response.json()
+    assert "markets" in data
+    assert len(data["markets"]) >= 8
+    first = data["markets"][0]
+    assert "name" in first
+    assert "district" in first
+
+def test_get_crops_endpoint():
+    response = client.get("/crops")
+    assert response.status_code == 200
+    data = response.json()
+    assert "crops" in data
+    assert len(data["crops"]) >= 3
+    crop_ids = [c["id"] for c in data["crops"]]
+    assert "soybean" in crop_ids
+
+def test_get_prices_endpoint():
+    # Full crop history
+    response = client.get("/prices?crop=soybean")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["crop"] == "soybean"
+    assert data["priceType"] == "MODAL"
+    assert len(data["records"]) > 0
+
+    # Specific market filter
+    m_id = data["records"][0]["marketId"]
+    resp_market = client.get(f"/prices?crop=soybean&market={m_id}")
+    assert resp_market.status_code == 200
+    m_data = resp_market.json()
+    assert m_data["marketId"] == m_id
+    assert len(m_data["records"]) == 1
+
+def test_get_distances_endpoint():
+    # From specific location
+    response = client.get("/distances?from=morshi_town")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["from"] == "morshi_town"
+    assert "distancesKm" in data
+    assert len(data["distancesKm"]) >= 8
+
+    # All origins
+    resp_all = client.get("/distances")
+    assert resp_all.status_code == 200
+    all_data = resp_all.json()
+    assert "farmerOrigins" in all_data
 
 def test_core_formula_mathematical_consistency():
     markets = [

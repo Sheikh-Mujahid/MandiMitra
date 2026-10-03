@@ -9,7 +9,12 @@ import {
   Settings2, 
   RotateCcw,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Compass,
+  Loader2,
+  AlertCircle,
+  CheckCircle2,
+  Info
 } from 'lucide-react';
 import { VEHICLE_CONFIGS } from '../engine/engine';
 import { translations } from '../i18n/translations';
@@ -24,6 +29,44 @@ export default function AssumptionsPanel({
 }) {
   const t = translations[lang] || translations.en;
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [geoLocating, setGeoLocating] = useState(false);
+  const [geoMsg, setGeoMsg] = useState(null);
+
+  const snapToCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setGeoMsg({ type: 'error', text: 'Geolocation is not supported by your browser.' });
+      return;
+    }
+    setGeoLocating(true);
+    setGeoMsg(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const userLat = pos.coords.latitude;
+        const userLon = pos.coords.longitude;
+        let nearest = origins[0];
+        let minDist = Infinity;
+        for (const o of origins) {
+          const lat = o.lat || o.latitude;
+          const lon = o.lon || o.longitude;
+          const d = Math.hypot(userLat - lat, userLon - lon);
+          if (d < minDist) {
+            minDist = d;
+            nearest = o;
+          }
+        }
+        if (nearest) {
+          setAssumptions(prev => ({ ...prev, location: nearest.id || nearest.location_id }));
+          setGeoMsg({ type: 'success', text: `Snapped to nearest town: ${nearest.name}` });
+        }
+        setGeoLocating(false);
+      },
+      (err) => {
+        setGeoLocating(false);
+        setGeoMsg({ type: 'error', text: `GPS error: ${err.message}` });
+      },
+      { timeout: 7000 }
+    );
+  };
 
   const currentCropObj = crops.find(c => c.id === assumptions.crop) || crops[0] || {};
 
@@ -103,14 +146,51 @@ export default function AssumptionsPanel({
           </div>
         </div>
 
+        {/* Geolocation feedback notification */}
+        {geoMsg && (
+          <div className={`p-2.5 rounded-xl flex items-center gap-2 text-xs font-medium ${
+            geoMsg.type === 'success' 
+              ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' 
+              : 'bg-amber-50 text-amber-800 border border-amber-200'
+          }`}>
+            {geoMsg.type === 'success' ? (
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            ) : (
+              <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+            )}
+            <span>{geoMsg.text}</span>
+          </div>
+        )}
+
         {/* 2. Farm Location & Quantity */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Location */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5 flex items-center gap-1">
-              <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-              <span>{t.step2Location}</span>
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                <span>{t.step2Location}</span>
+              </label>
+              <button
+                type="button"
+                onClick={snapToCurrentLocation}
+                disabled={geoLocating}
+                className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200 transition-colors"
+                title="Use browser geolocation to snap to the nearest farmer origin town"
+              >
+                {geoLocating ? (
+                  <>
+                    <Loader2 className="w-3 h-3 animate-spin text-emerald-600" />
+                    <span>Locating...</span>
+                  </>
+                ) : (
+                  <>
+                    <Compass className="w-3 h-3 text-emerald-600" />
+                    <span>Use My Location</span>
+                  </>
+                )}
+              </button>
+            </div>
             <select
               value={assumptions.location}
               onChange={(e) => setAssumptions(prev => ({ ...prev, location: e.target.value }))}
@@ -142,23 +222,37 @@ export default function AssumptionsPanel({
               </div>
             </div>
 
-            <input
-              type="range"
-              min="5"
-              max="250"
-              step="5"
-              value={assumptions.quantity}
-              onChange={(e) => setAssumptions(prev => ({ ...prev, quantity: Number(e.target.value) }))}
-              className="w-full h-2 bg-slate-200 rounded-lg cursor-pointer accent-emerald-600"
-            />
-            <div className="flex justify-between text-[10px] text-slate-400 mt-1">
-              <span>5 q</span>
-              <span>50 q</span>
-              <span>120 q</span>
-              <span>250 q</span>
+            <div className="space-y-1.5">
+              <input
+                type="range"
+                min="5"
+                max="250"
+                step="5"
+                value={assumptions.quantity}
+                onChange={(e) => setAssumptions(prev => ({ ...prev, quantity: Math.max(1, Number(e.target.value)) }))}
+                className="w-full h-2 bg-slate-200 rounded-lg cursor-pointer accent-emerald-600"
+              />
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="1"
+                  max="2000"
+                  value={assumptions.quantity}
+                  onChange={(e) => setAssumptions(prev => ({ ...prev, quantity: Math.max(0.1, Number(e.target.value) || 0) }))}
+                  className="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <span className="text-[11px] text-slate-400 font-medium whitespace-nowrap">{t.qntlUnit}</span>
+              </div>
             </div>
+            {assumptions.quantity <= 0 && (
+              <p className="text-[11px] text-red-600 mt-1 flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" />
+                Quantity must be greater than 0 quintals.
+              </p>
+            )}
           </div>
         </div>
+
 
         {/* 3. Transport Vehicle & Rate */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1 border-t border-slate-100">
@@ -381,7 +475,18 @@ export default function AssumptionsPanel({
           )}
         </div>
 
+        {/* Visible note under prices */}
+        <div className="pt-2 border-t border-slate-100">
+          <div className="bg-amber-50/80 border border-amber-200/70 rounded-xl p-3 flex items-start gap-2.5">
+            <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <p className="text-xs font-medium text-amber-900 leading-relaxed">
+              Modal prices from official mandi data; actual price depends on quality and grade.
+            </p>
+          </div>
+        </div>
+
       </div>
     </div>
   );
 }
+
