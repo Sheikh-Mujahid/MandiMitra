@@ -25,7 +25,8 @@ export default function AssumptionsPanel({
   crops,
   origins,
   lang,
-  onReset
+  onReset,
+  onApplyPreset
 }) {
   const t = translations[lang] || translations.en;
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -120,6 +121,31 @@ export default function AssumptionsPanel({
       </div>
 
       <div className="p-5 space-y-5">
+        {/* Quick Demo Scenario Bar */}
+        {onApplyPreset && (
+          <div className="bg-amber-50/80 rounded-xl p-3 border border-amber-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2">
+              <span className="p-1 bg-amber-400 text-amber-950 rounded-lg text-xs font-black">
+                DEMO
+              </span>
+              <span className="text-xs font-bold text-amber-950">
+                {lang === 'mr' ? 'डेमो परिस्थिती:' : lang === 'hi' ? 'डेमो परिदृश्य:' : 'Demo Scenario:'}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => onApplyPreset('wheat_amravati_flip')}
+              className="px-3 py-1.5 bg-amber-400 hover:bg-amber-300 active:scale-95 text-amber-950 font-black text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5"
+              title="50 q Wheat from Amravati: Raising freight flips #1 between Buldhana and Amravati"
+            >
+              <span>50 q Wheat from Amravati</span>
+              <span className="text-[10px] bg-amber-950 text-amber-200 px-1.5 py-0.5 rounded-full font-bold">
+                Flip #1
+              </span>
+            </button>
+          </div>
+        )}
+
         {/* 1. Crop Selection Chips */}
         <div>
           <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">

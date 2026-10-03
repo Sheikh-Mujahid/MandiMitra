@@ -292,6 +292,27 @@ export default function RankedMandiList({ rankedMarkets = [], lang = 'en' }) {
                         <span className="text-slate-600 font-medium">
                           {t.modalPrefix}₹{item.price.toLocaleString('en-IN')}/q
                         </span>
+                        <span>•</span>
+                        <span className={`inline-flex items-center gap-0.5 text-[11px] font-bold px-1.5 py-0.5 rounded ${
+                          item.trend === 'UP' || item.trend === 'Rising'
+                            ? 'text-emerald-700 bg-emerald-50'
+                            : item.trend === 'DOWN' || item.trend === 'Falling'
+                            ? 'text-rose-700 bg-rose-50'
+                            : 'text-slate-600 bg-slate-100'
+                        }`}>
+                          {item.trend === 'UP' || item.trend === 'Rising' ? (
+                            <TrendingUp className="w-3 h-3" />
+                          ) : item.trend === 'DOWN' || item.trend === 'Falling' ? (
+                            <TrendingDown className="w-3 h-3" />
+                          ) : (
+                            <Minus className="w-3 h-3" />
+                          )}
+                          <span>Trend {item.trendAdjustment >= 0 ? `+${Math.round((item.trendAdjustment || 0) * 1000) / 10}%` : `${Math.round((item.trendAdjustment || 0) * 1000) / 10}%`}</span>
+                        </span>
+                        <span>•</span>
+                        <span className="text-slate-600 font-semibold text-[11px]">
+                          Confidence: {Math.round(typeof item.confidence === 'number' && item.confidence <= 1 ? item.confidence * 100 : item.confidence)}%
+                        </span>
                       </div>
                     </div>
                   </div>

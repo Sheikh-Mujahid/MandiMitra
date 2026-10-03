@@ -270,6 +270,7 @@ export default function App() {
               origins={distancesData.farmerOrigins}
               lang={lang}
               onReset={() => setAssumptions(defaultAssumptions)}
+              onApplyPreset={handleApplyPreset}
             />
           </div>
 

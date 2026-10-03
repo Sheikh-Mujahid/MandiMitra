@@ -170,6 +170,14 @@ export default function WhyChosenModal({
                 <span className="font-semibold text-rose-600">-₹{Math.round(cb.marketFee || 0).toLocaleString('en-IN')}</span>
               </div>
 
+              {/* Commission (if applicable) */}
+              {(cb.commission || 0) > 0 && (
+                <div className="px-4 py-2 flex items-center justify-between text-slate-700">
+                  <span>(-) Commission & Brokerage</span>
+                  <span className="font-semibold text-rose-600">-₹{Math.round(cb.commission).toLocaleString('en-IN')}</span>
+                </div>
+              )}
+
               {/* Weighment / Tolai */}
               <div className="px-4 py-2 flex items-center justify-between text-slate-700">
                 <span>(-) Weighment (Tolai) Charges</span>
@@ -180,6 +188,20 @@ export default function WhyChosenModal({
               <div className="px-4 py-2 flex items-center justify-between text-slate-700">
                 <span>(-) Transit Spoilage & Handling Loss</span>
                 <span className="font-semibold text-rose-600">-₹{Math.round(cb.wastage || 0).toLocaleString('en-IN')}</span>
+              </div>
+
+              {/* Storage (if applicable) */}
+              {(cb.storage || 0) > 0 && (
+                <div className="px-4 py-2 flex items-center justify-between text-slate-700">
+                  <span>(-) Storage & Holding Cost</span>
+                  <span className="font-semibold text-rose-600">-₹{Math.round(cb.storage).toLocaleString('en-IN')}</span>
+                </div>
+              )}
+
+              {/* Total Deductions Reconciliation Bar */}
+              <div className="px-4 py-2 flex items-center justify-between bg-slate-50 text-slate-500 text-[11px] font-semibold border-t border-slate-200">
+                <span>Total Costs & Deductions (Transport + Other Costs)</span>
+                <span className="text-rose-700 font-bold">-₹{Math.round((topMandi.transport || 0) + (topMandi.otherCosts || 0)).toLocaleString('en-IN')}</span>
               </div>
 
               {/* Final Net In-Pocket Return */}

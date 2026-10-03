@@ -179,7 +179,9 @@ export default function TopRecommendationBanner({ topMandi, runnerUp, lang, crop
             </div>
             <div className="text-[11px] text-emerald-300/80 mt-0.5">
               <span>{t.confidenceLabel} </span>
-              <span className="font-semibold text-white">{Math.round(topMandi.confidence * 100)}%</span>
+              <span className="font-semibold text-white">
+                {Math.round(typeof topMandi.confidence === 'number' && topMandi.confidence <= 1 ? topMandi.confidence * 100 : topMandi.confidence)}%
+              </span>
             </div>
           </div>
 
