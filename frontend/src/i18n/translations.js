@@ -70,10 +70,15 @@ export const translations = {
 
     // Tabs
     tabRankings: 'Ranked Mandis',
+    tabCompare: 'Compare 2 Mandis',
     tabTradeoff: 'Profit vs Distance',
     tabWaterfall: 'Cost Breakdown',
-    tabTrends: '7-Day Price Trends',
+    tabTrends: 'Price Trends',
     tabMap: 'Mandi Map',
+    breakEvenTitle: 'Break-Even Extra Distance',
+    sellNowTitle: 'Sell Now vs Wait',
+    priceAlertTitle: 'Target Price Alert',
+
 
     // Ranked List
     listHeaderTitle: 'All Mandis Ranked by Expected Net Return',
@@ -194,10 +199,15 @@ export const translations = {
 
     // Tabs
     tabRankings: 'मंडी रैंकिंग सूची',
+    tabCompare: 'दो मंडियों की तुलना',
     tabTradeoff: 'लाभ बनाम दूरी ग्राफ',
     tabWaterfall: 'लागत कटौती ब्यौरा',
-    tabTrends: '7-दिवसीय रुझान',
+    tabTrends: 'भाव रुझान चार्ट',
     tabMap: 'भौगोलिक नक्शा',
+    breakEvenTitle: 'ब्रेक-ईवन दूरी विश्लेषण',
+    sellNowTitle: 'आज बेचें या प्रतीक्षा करें',
+    priceAlertTitle: 'टारगेट मूल्य अलर्ट',
+
 
     // Ranked List
     listHeaderTitle: 'सभी मंडियों की शुद्ध लाभ रैंकिंग',
@@ -318,10 +328,15 @@ export const translations = {
 
     // Tabs
     tabRankings: 'बाजार समिती रँकिंग',
+    tabCompare: 'दोन बाजार समित्यांची तुलना',
     tabTradeoff: 'नफा विरुद्ध अंतर आलेख',
     tabWaterfall: 'खर्च वजावट विश्लेषण',
-    tabTrends: '७-दिवसीय भाव कल',
+    tabTrends: 'भाव कल आलेख',
     tabMap: 'भौगोलिक नकाशा',
+    breakEvenTitle: 'अतिरिक्त ब्रेक-ईव्हन अंतर',
+    sellNowTitle: 'आज विका की थांबा',
+    priceAlertTitle: 'लक्ष्य भाव अलर्ट',
+
 
     // Ranked List
     listHeaderTitle: 'सर्व बाजार समित्यांची निव्वळ नफ्यानुसार क्रमवारी',

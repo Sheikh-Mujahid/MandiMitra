@@ -362,8 +362,9 @@ export default function App() {
               }`}
             >
               <ArrowRightLeft className="w-4 h-4" />
-              <span>Compare 2 Mandis</span>
+              <span>{t.tabCompare}</span>
             </button>
+
 
             <button
               onClick={() => setActiveTab('tradeoff')}
