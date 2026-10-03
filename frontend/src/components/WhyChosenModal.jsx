@@ -10,9 +10,14 @@ import {
   ChevronDown, 
   ChevronUp, 
   CheckCircle2,
-  Scale
+  Scale,
+  CloudRain,
+  Droplets,
+  Wind,
+  Info
 } from 'lucide-react';
 import { explainRecommendation } from '../engine/explain';
+import { translations } from '../i18n/translations';
 
 export default function WhyChosenModal({
   isOpen,
@@ -104,6 +109,90 @@ export default function WhyChosenModal({
             </span>
             <p className="text-sm font-medium text-slate-800 leading-relaxed m-0">
               {explanation.summary}
+            </p>
+          </div>
+
+          {/* Mini 3-Day Forecast Strip for Selected Market */}
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <CloudRain className="w-4 h-4 text-emerald-700" />
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                  {translations[lang]?.weather3DayForecast || '3-Day Weather Forecast'} • {topMandi.market.name}
+                </span>
+                {topMandi.weather?.isSampleOverride && (
+                  <span className="text-[10px] bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.5 rounded font-bold">
+                    {translations[lang]?.weatherSampleData || 'Sample Data'}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2 text-[11px] text-slate-500">
+                <span>{translations[lang]?.weatherUpdated || 'Forecast updated'} {topMandi.weather?.updatedAt || '10:30 AM'}</span>
+                <span className={`px-2 py-0.5 rounded-full font-bold uppercase text-[10px] border ${
+                  topMandi.weather?.level === 'risk'
+                    ? 'bg-rose-100 text-rose-800 border-rose-300'
+                    : topMandi.weather?.level === 'caution'
+                    ? 'bg-amber-100 text-amber-800 border-amber-300'
+                    : 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                }`}>
+                  {topMandi.weather?.level === 'risk' 
+                    ? (translations[lang]?.weatherRisk || 'Risk') 
+                    : topMandi.weather?.level === 'caution' 
+                    ? (translations[lang]?.weatherCaution || 'Caution') 
+                    : (translations[lang]?.weatherClear || 'Clear')}
+                </span>
+              </div>
+            </div>
+
+            {/* 3-day cards strip */}
+            {topMandi.weather?.days && topMandi.weather.days.length > 0 ? (
+              <div className="grid grid-cols-3 gap-2.5">
+                {topMandi.weather.days.slice(0, 3).map((d, i) => {
+                  const dayTitle = i === 0 
+                    ? (lang === 'mr' ? 'आज' : lang === 'hi' ? 'आज' : 'Today') 
+                    : i === 1 
+                    ? (lang === 'mr' ? 'उद्या' : lang === 'hi' ? 'कल' : 'Tomorrow') 
+                    : (lang === 'mr' ? 'परवा' : lang === 'hi' ? 'परसों' : 'Day 3');
+                  return (
+                    <div key={d.date || i} className={`p-2.5 rounded-xl border text-center ${
+                      i === 0 ? 'bg-white border-emerald-300 ring-1 ring-emerald-200 shadow-xs' : 'bg-white border-slate-200'
+                    }`}>
+                      <div className="flex items-center justify-between text-[11px] font-bold text-slate-600 mb-1">
+                        <span>{dayTitle}</span>
+                        <span className="text-[10px] font-medium text-slate-400">{d.date?.slice(5)}</span>
+                      </div>
+                      <div className="text-base font-black text-slate-800 my-0.5">
+                        {Math.round(d.tempMax)}°C
+                      </div>
+                      <div className="text-[11px] font-semibold text-slate-600 truncate">
+                        {d.label}
+                      </div>
+                      <div className="mt-1 text-[10px] text-cyan-700 font-semibold flex items-center justify-center gap-1">
+                        <Droplets className="w-3 h-3" />
+                        <span>{d.precipProb}% rain</span>
+                        {d.precipSum > 0 && <span>({d.precipSum}mm)</span>}
+                      </div>
+                      {d.windSpeed > 0 && (
+                        <div className="text-[9px] text-slate-400 mt-0.5 flex items-center justify-center gap-1">
+                          <Wind className="w-2.5 h-2.5" />
+                          <span>{Math.round(d.windSpeed)} km/h</span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="p-3 bg-white border border-slate-200 rounded-xl text-center text-xs text-slate-500">
+                <span className="font-semibold block">{translations[lang]?.weatherUnavailable || 'Weather unavailable'}</span>
+                <span className="text-[11px] text-slate-400">Transit weather service offline. No penalty applied.</span>
+              </div>
+            )}
+
+            {/* Advisory Notice */}
+            <p className="text-[10px] text-slate-500 italic m-0 flex items-center gap-1">
+              <Info className="w-3 h-3 text-slate-400" />
+              <span>{translations[lang]?.weatherAdvisory || 'Forecasts are estimates and may change.'}</span>
             </p>
           </div>
 

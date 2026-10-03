@@ -26,6 +26,7 @@ export * from './netReturn.js';
 export * from './rank.js';
 export * from './explain.js';
 export * from './extras.js';
+export * from './weather.js';
 
 // Re-export VEHICLE_CONFIGS for backwards compatibility with any existing components
 export { VEHICLE_PRESETS as VEHICLE_CONFIGS } from './transport.js';

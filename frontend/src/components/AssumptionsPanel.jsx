@@ -14,7 +14,8 @@ import {
   Loader2,
   AlertCircle,
   CheckCircle2,
-  Info
+  Info,
+  CloudRain
 } from 'lucide-react';
 import { VEHICLE_CONFIGS } from '../engine/engine';
 import { translations } from '../i18n/translations';
@@ -123,26 +124,46 @@ export default function AssumptionsPanel({
       <div className="p-5 space-y-5">
         {/* Quick Demo Scenario Bar */}
         {onApplyPreset && (
-          <div className="bg-amber-50/80 rounded-xl p-3 border border-amber-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-            <div className="flex items-center gap-2">
-              <span className="p-1 bg-amber-400 text-amber-950 rounded-lg text-xs font-black">
-                DEMO
-              </span>
-              <span className="text-xs font-bold text-amber-950">
-                {lang === 'mr' ? 'डेमो परिस्थिती:' : lang === 'hi' ? 'डेमो परिदृश्य:' : 'Demo Scenario:'}
-              </span>
+          <div className="bg-amber-50/80 rounded-xl p-3 border border-amber-200/90 flex flex-col gap-2.5">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div className="flex items-center gap-2">
+                <span className="p-1 bg-amber-400 text-amber-950 rounded-lg text-xs font-black">
+                  DEMO
+                </span>
+                <span className="text-xs font-bold text-amber-950">
+                  {lang === 'mr' ? 'डेमो परिस्थिती निवडा:' : lang === 'hi' ? 'डेमो परिदृश्य चुनें:' : 'Demo Scenarios:'}
+                </span>
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={() => onApplyPreset('wheat_amravati_flip')}
-              className="px-3 py-1.5 bg-amber-400 hover:bg-amber-300 active:scale-95 text-amber-950 font-black text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5"
-              title="50 q Wheat from Amravati: Raising freight flips #1 between Buldhana and Amravati"
-            >
-              <span>50 q Wheat from Amravati</span>
-              <span className="text-[10px] bg-amber-950 text-amber-200 px-1.5 py-0.5 rounded-full font-bold">
-                Flip #1
-              </span>
-            </button>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => onApplyPreset('wheat_amravati_flip')}
+                className="px-3 py-1.5 bg-amber-400 hover:bg-amber-300 active:scale-95 text-amber-950 font-black text-xs rounded-xl shadow-sm transition-all flex items-center justify-between"
+                title="50 q Wheat from Amravati: Raising freight flips #1 between Buldhana and Amravati"
+              >
+                <span>50 q Wheat (Freight)</span>
+                <span className="text-[10px] bg-amber-950 text-amber-200 px-1.5 py-0.5 rounded-full font-bold">
+                  Flip #1
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onApplyPreset('akola_weather_demo')}
+                className="px-3 py-1.5 bg-rose-500/15 hover:bg-rose-500/25 border border-rose-300 text-rose-950 font-black text-xs rounded-xl shadow-sm transition-all flex items-center justify-between"
+                title="Akola Storm Demo: Akola APMC faces heavy storm. Toggling weather risk flips #1 to clear Amravati!"
+              >
+                <span className="flex items-center gap-1">
+                  <CloudRain className="w-3.5 h-3.5 text-rose-700" />
+                  <span>Akola Storm Demo</span>
+                </span>
+                <span className="text-[10px] bg-rose-700 text-white px-1.5 py-0.5 rounded-full font-bold">
+                  Weather Risk
+                </span>
+              </button>
+            </div>
           </div>
         )}
 
@@ -412,6 +433,60 @@ export default function AssumptionsPanel({
               {t.stressTestBaseline}
             </button>
             <span>{t.stressTestSurge}</span>
+          </div>
+        </div>
+
+        {/* Weather Risk Ranking Toggle (What-If Simulator) */}
+        <div className={`rounded-xl p-3.5 border transition-all ${
+          assumptions.includeWeatherRisk
+            ? 'bg-rose-50/80 border-rose-300 ring-2 ring-rose-200'
+            : 'bg-slate-50/90 border-slate-200 hover:border-slate-300'
+        }`}>
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-2.5">
+              <div className={`p-1.5 rounded-lg shrink-0 mt-0.5 ${
+                assumptions.includeWeatherRisk ? 'bg-rose-100 text-rose-800' : 'bg-slate-200 text-slate-700'
+              }`}>
+                <CloudRain className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <label htmlFor="weather-risk-toggle" className="text-xs font-bold text-slate-800 cursor-pointer">
+                    {t.includeWeatherRisk}
+                  </label>
+                  <span className={`text-[10px] font-black px-1.5 py-0.2 rounded border ${
+                    assumptions.includeWeatherRisk 
+                      ? 'bg-rose-600 text-white border-rose-600' 
+                      : 'bg-slate-200 text-slate-600 border-slate-300'
+                  }`}>
+                    {assumptions.includeWeatherRisk ? 'ON' : 'OFF'}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500 mt-1 leading-relaxed m-0">
+                  {t.weatherRiskDesc}
+                </p>
+                <span className="text-[10px] text-slate-400 italic block mt-1">
+                  {t.weatherAdvisory}
+                </span>
+              </div>
+            </div>
+
+            <button
+              id="weather-risk-toggle"
+              type="button"
+              role="switch"
+              aria-checked={Boolean(assumptions.includeWeatherRisk)}
+              onClick={() => setAssumptions(prev => ({ ...prev, includeWeatherRisk: !prev.includeWeatherRisk }))}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                assumptions.includeWeatherRisk ? 'bg-rose-600' : 'bg-slate-300'
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                  assumptions.includeWeatherRisk ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </button>
           </div>
         </div>
 

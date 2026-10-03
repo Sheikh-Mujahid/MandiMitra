@@ -14,6 +14,7 @@ import { calculateTransportCost, determineVehicles, calculateVehiclesNeeded, VEH
 import { analyzePriceTrend } from './trend.js';
 import { calculateNetReturn, CROP_DEFAULT_EXTRAS } from './netReturn.js';
 import { explainRecommendation } from './explain.js';
+import { classifyWeather, weatherRiskPenalty, SAMPLE_DEMO_WEATHER } from './weather.js';
 
 import defaultMarketsData from '../../../data/markets.json';
 import defaultPricesData from '../../../data/prices.json';
@@ -70,7 +71,9 @@ export function rankMarkets({
   maxDataAgeDays = 7,
   customMarkets = null,
   customPrices = null,
-  customDistances = null
+  customDistances = null,
+  includeWeatherRisk = false,
+  weatherData = null
 } = {}) {
   const rawMarkets = customMarkets || defaultMarketsData;
   const markets = Array.isArray(rawMarkets) ? rawMarkets : (rawMarkets.markets || []);
@@ -264,15 +267,26 @@ export function rankMarkets({
       marketOverrides: market
     });
 
+    // Weather classification & optional risk penalty
+    const mId = market.market_id || market.id;
+    const mandiWeather = weatherData?.mandis?.[mId] || SAMPLE_DEMO_WEATHER.mandis?.[mId] || null;
+    const weatherEval = classifyWeather(mandiWeather?.daily);
+
+    // Documented percentage penalty applied ONLY when toggle is ON
+    const weatherPenalty = includeWeatherRisk
+      ? weatherRiskPenalty(weatherEval.level, netReturnCalc.netReturn)
+      : 0;
+
     // Risk adjustment penalty:
     // Penalty is documented and small:
     // - Low confidence penalty: up to 0.5% of net return
     // - Data staleness penalty: 0.2% per day of staleness
+    // - Weather risk penalty: 0.5% for caution, 1.5% for risk (ONLY if includeWeatherRisk is true)
     // Does NOT double count trend or distance (those are already accounted for in price and transport).
     const confFactor = Math.max(0, (100 - confidence) / 100);
     const confidencePenalty = Math.round(netReturnCalc.netReturn * 0.005 * confFactor * 100) / 100;
     const stalenessPenalty = Math.round(netReturnCalc.netReturn * 0.002 * dataAgeDays * 100) / 100;
-    const totalRiskPenalty = Math.max(0, confidencePenalty + stalenessPenalty);
+    const totalRiskPenalty = Math.max(0, confidencePenalty + stalenessPenalty + weatherPenalty);
     const riskAdjustedNetReturn = Math.round((netReturnCalc.netReturn - totalRiskPenalty) * 100) / 100;
 
     candidates.push({
@@ -297,6 +311,17 @@ export function rankMarkets({
       dataAgeDays,
       arrivalsQntl: prec.arrivalsQntl || 0,
       history: prec.history || [],
+      weatherLevel: weatherEval.level,
+      weatherReasons: weatherEval.reasons,
+      weather: {
+        level: weatherEval.level,
+        reasons: weatherEval.reasons,
+        day0: weatherEval.day0,
+        days: weatherEval.days,
+        isAvailable: weatherEval.isAvailable,
+        penalty: weatherPenalty
+      },
+      weatherRiskPenalty: weatherPenalty,
       costBreakdown: {
         revenue: netReturnCalc.revenue,
         expectedPrice: netReturnCalc.expectedPrice,
@@ -323,6 +348,9 @@ export function rankMarkets({
   if (candidates.length > 0) {
     nearest = candidates.reduce((prev, curr) => (curr.distanceKm < prev.distanceKm ? curr : prev));
   }
+
+  // Identify best alternative market with clear weather
+  const clearAlternative = candidates.find(c => c.weather?.level === 'clear') || null;
 
   const top = candidates[0] || null;
   const runnerUp = candidates[1] || null;
@@ -356,6 +384,7 @@ export function rankMarkets({
         runnerUp,
         nearest,
         highestPriceMarket: highestPriceMarketRef,
+        clearAlternative,
         cropName: cropMetadata.name,
         lang
       });
@@ -384,6 +413,7 @@ export function rankMarkets({
   // Attach excluded markets list to result array
   rankedResults.excluded = excluded;
   rankedResults.isHighestPriceNotRankOne = isHighestPriceNotRankOne;
+  rankedResults.includeWeatherRisk = includeWeatherRisk;
 
   return rankedResults;
 }

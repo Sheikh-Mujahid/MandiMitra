@@ -93,8 +93,17 @@ export default function Header({
                 className="px-2.5 py-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 font-bold border border-amber-400/30 transition-all flex items-center gap-1"
                 title="50 q Wheat from Amravati: Raising freight flips #1 between Buldhana and Amravati"
               >
-                <span>50 q Wheat (Amravati)</span>
+                <span>50 q Wheat</span>
                 <span className="text-[9px] px-1 bg-amber-400 text-amber-950 rounded font-black">FLIP</span>
+              </button>
+
+              {/* Weather Risk Demo Preset */}
+              <button
+                onClick={() => onApplyPreset('akola_weather_demo')}
+                className="px-2.5 py-1 rounded-lg bg-rose-500/25 hover:bg-rose-500/35 text-rose-200 font-bold border border-rose-400/40 transition-all flex items-center gap-1"
+                title="Akola Storm Weather Demo: Akola APMC faces heavy storm. Toggling weather risk flips #1 to clear Amravati!"
+              >
+                <span>⛈️ Akola Storm Demo</span>
               </button>
 
               <button

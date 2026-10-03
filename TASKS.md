@@ -121,3 +121,33 @@
 - [x] 5. Interactive map with Leaflet/OpenStreetMap: farmer location and mandis, click marker to see distance, price, transport, and net return (`MandiMap.jsx`). Commit: `feat: add mandi map`
 - [x] 6. Final README: problem, solution, screenshots, architecture diagram, data source and limits, calculation formulas, daily update workflow, setup instructions, "how we differ from e-NAM, AGMARKNET and similar tools", future work. Commit: `docs: finalize README`
 - [x] 7. Deploy: frontend to Vercel/Netlify, backend to Render/Railway, environment variables documented, live links in README (`vercel.json`, `netlify.toml`, `render.yaml`, `.env.example`). Commit: `chore: deploy`
+
+---
+
+## TASK 7: Weather-Aware Feature & Risk Adjustment
+- [x] 1. Backend Open-Meteo Integration (`backend/main.py`):
+  - `GET /weather?lat=&lon=` and `GET /weather/mandis` for all mandis in one call.
+  - 30-min in-memory cache, graceful error handling and offline fallback (`{"status": "unavailable"}`).
+  - Unit tests in `backend/test_backend.py` covering endpoints, cache, and failure fallback (11/11 passing).
+- [x] 2. Pure JS Weather Engine (`frontend/src/engine/weather.js`):
+  - `classifyWeather(daily)`: Configurable thresholds for `risk` (heavy rain >= 20mm or prob >= 70%, thunderstorms, wind >= 40km/h), `caution` (moderate rain 5-20mm, extreme heat > 40°C), and `clear`.
+  - `weatherRiskPenalty(level, netReturn)`: Small documented penalty (0% clear, 0.5% caution, 1.5% risk) applied **only** when toggle is ON.
+  - Default ranking strictly unchanged when toggle is OFF.
+  - `explainRecommendation` extended: warning sentence if #1 market has weather risk, naming best clear-weather alternative and net-return profit difference.
+  - Unit tests in `frontend/src/engine/engine.test.js` (15/15 passing).
+- [x] 3. Interactive UI Components:
+  - `WeatherChip.jsx`: Weather icon + max temperature + rain chance with 3-day forecast tooltip on table and cards.
+  - Warning banner on `TopRecommendationBanner.jsx` when #1 market is "caution" or "risk".
+  - Toggle in `AssumptionsPanel.jsx`: "Include weather risk in ranking" (default OFF) updating ranking instantly with highlight change animation.
+  - Mini 3-day forecast strip in `WhyChosenModal.jsx` with timestamp and advisory note.
+  - Advisory notice: *"Forecasts are estimates and may change."*
+  - Multilingual dictionaries in `translations.js` for English, Hindi, and Marathi.
+- [x] 4. Demo Scenario Preset:
+  - "Akola Storm Demo" preset button (Wheat, Murtizapur, 50 q, ₹35/km freight).
+  - Akola is #1 with thunderstorm/heavy rain warning; Amravati is #2 clear weather.
+  - Toggling "Include weather risk in ranking" flips recommendation to Amravati APMC.
+- [x] 5. Documentation & Deck Notes:
+  - Updated `README.md` with features, Open-Meteo data source, limitations, and calculation formula.
+  - Created `docs/GAMMA_DECK_NOTES.md` with comprehensive slide-by-slide speaker notes and demo guide.
+- [x] Commit: `feat: add weather forecast, risk warning and optional ranking adjustment`
+

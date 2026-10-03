@@ -6,15 +6,29 @@ import {
   Minus, 
   Truck, 
   MapPin, 
-  Sparkles
+  Sparkles,
+  AlertTriangle
 } from 'lucide-react';
+import WeatherChip from './WeatherChip';
 import { translations } from '../i18n/translations';
 
-export default function TopRecommendationBanner({ topMandi, runnerUp, lang, cropName, onOpenWhy }) {
+export default function TopRecommendationBanner({ 
+  topMandi, 
+  runnerUp, 
+  lang, 
+  cropName, 
+  onOpenWhy,
+  clearAlternative = null,
+  includeWeatherRisk = false,
+  onToggleWeatherRisk = null
+}) {
   if (!topMandi) return null;
 
   const t = translations[lang] || translations.en;
   const profitAdvantage = runnerUp ? Math.round(topMandi.netReturn - runnerUp.netReturn) : 0;
+  const hasWeatherWarning = topMandi.weather?.level === 'risk' || topMandi.weather?.level === 'caution';
+  const weatherReasonText = topMandi.weather?.reasons?.[0] || (topMandi.weather?.level === 'risk' ? 'Heavy rain/storm expected' : 'Unfavorable weather');
+  const clearDiff = clearAlternative ? Math.max(0, Math.round(topMandi.netReturn - clearAlternative.netReturn)) : 0;
 
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-950 text-white shadow-xl border border-emerald-500/30 p-6 md:p-7">
@@ -27,7 +41,7 @@ export default function TopRecommendationBanner({ topMandi, runnerUp, lang, crop
         
         {/* Top Badges */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="flex items-center gap-1.5 px-3 py-1 bg-amber-400 text-amber-950 font-black text-xs uppercase tracking-wider rounded-full shadow-md ring-2 ring-amber-300/30">
               <Trophy className="w-3.5 h-3.5 fill-amber-950" />
               {t.rank1Badge}
@@ -35,6 +49,14 @@ export default function TopRecommendationBanner({ topMandi, runnerUp, lang, crop
             <span className="text-xs px-2.5 py-1 bg-emerald-700/60 text-emerald-200 border border-emerald-500/30 rounded-full font-medium">
               {topMandi.market.state} • {topMandi.market.district}
             </span>
+            {topMandi.weather && (
+              <WeatherChip 
+                weather={topMandi.weather} 
+                mandiName={topMandi.market.name} 
+                lang={lang} 
+                isSampleOverride={topMandi.market.id === 'akola_apmc' && topMandi.weather?.day0?.weatherCode === 95}
+              />
+            )}
           </div>
 
           <div className="flex items-center gap-2 text-xs">
@@ -83,6 +105,43 @@ export default function TopRecommendationBanner({ topMandi, runnerUp, lang, crop
                 </button>
               )}
             </div>
+
+            {/* Weather Risk Warning Banner on Recommendation Card */}
+            {hasWeatherWarning && (
+              <div className="mt-3 bg-gradient-to-r from-amber-950/90 via-rose-950/80 to-amber-950/90 border border-amber-400/60 rounded-xl p-3.5 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div className="flex items-start gap-2.5">
+                  <div className="p-1.5 bg-amber-400 text-amber-950 rounded-lg shrink-0 mt-0.5 font-bold">
+                    <AlertTriangle className="w-4 h-4 text-amber-950" />
+                  </div>
+                  <div>
+                    <span className="font-extrabold uppercase tracking-wider text-amber-300 block mb-0.5 text-[11px]">
+                      ⚠️ {t.weatherWarningTitle || 'Weather Risk Advisory'} ({topMandi.weather?.level?.toUpperCase()})
+                    </span>
+                    <p className="text-amber-100 font-medium leading-relaxed m-0 text-xs sm:text-sm">
+                      {weatherReasonText} near {topMandi.market.name} on your travel day.{' '}
+                      {clearAlternative && clearAlternative.market?.id !== topMandi.market?.id ? (
+                        <span>
+                          <strong>{clearAlternative.market.name}</strong> has clear weather and is ₹{clearDiff.toLocaleString('en-IN')} lower.
+                        </span>
+                      ) : ''}
+                    </p>
+                    <span className="text-[10px] text-amber-300/70 block mt-1">
+                      {t.weatherAdvisory}
+                    </span>
+                  </div>
+                </div>
+
+                {onToggleWeatherRisk && (
+                  <button
+                    type="button"
+                    onClick={onToggleWeatherRisk}
+                    className="shrink-0 self-start sm:self-center px-3 py-1.5 bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5"
+                  >
+                    <span>{includeWeatherRisk ? 'Weather Risk: ON' : 'Include Weather Risk in Ranking'}</span>
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
 

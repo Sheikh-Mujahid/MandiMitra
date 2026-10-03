@@ -213,15 +213,98 @@ export async function fetchDataStatus() {
   return _cache.dataStatus;
 }
 
+import { SAMPLE_DEMO_WEATHER } from './engine/weather.js';
+
+/**
+ * Fetches 3-day weather for all mandis in one call
+ */
+export async function fetchMandisWeather() {
+  if (_cache.mandisWeather) return _cache.mandisWeather;
+
+  const isLive = await checkBackendHealth();
+  if (isLive) {
+    try {
+      const resp = await fetch(`${API_BASE_URL}/weather/mandis`);
+      if (resp.ok) {
+        const data = await resp.json();
+        _cache.mandisWeather = data;
+        return data;
+      }
+    } catch (e) {
+      console.warn('Fallback to sample weather data:', e);
+    }
+  }
+
+  _cache.mandisWeather = SAMPLE_DEMO_WEATHER;
+  return _cache.mandisWeather;
+}
+
+/**
+ * Fetches 3-day weather for a specific lat/lon coordinate
+ */
+export async function fetchWeather(lat, lon) {
+  const cacheKey = `${Math.round(lat * 1000) / 1000}_${Math.round(lon * 1000) / 1000}`;
+  if (_cache.weather?.[cacheKey]) return _cache.weather[cacheKey];
+
+  const isLive = await checkBackendHealth();
+  if (isLive) {
+    try {
+      const resp = await fetch(`${API_BASE_URL}/weather?lat=${lat}&lon=${lon}`);
+      if (resp.ok) {
+        const data = await resp.json();
+        if (!_cache.weather) _cache.weather = {};
+        _cache.weather[cacheKey] = data;
+        return data;
+      }
+    } catch (e) {
+      console.warn('Backend weather fetch failed, attempting client-side Open-Meteo:', e);
+    }
+  }
+
+  // Client-side direct Open-Meteo fallback
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weather_code,temperature_2m_max,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&timezone=Asia%2FKolkata&forecast_days=3`;
+    const resp = await fetch(url);
+    if (resp.ok) {
+      const raw = await resp.json();
+      const formatted = {
+        latitude: lat,
+        longitude: lon,
+        status: 'available',
+        updatedAt: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+        daily: raw.daily,
+        source: 'Open-Meteo',
+        notice: 'Forecasts are estimates and may change.'
+      };
+      if (!_cache.weather) _cache.weather = {};
+      _cache.weather[cacheKey] = formatted;
+      return formatted;
+    }
+  } catch (err) {
+    // Return graceful unavailable object
+  }
+
+  return {
+    latitude: lat,
+    longitude: lon,
+    status: 'unavailable',
+    updatedAt: null,
+    daily: null,
+    message: 'Weather service currently unavailable. No risk penalty applied.',
+    notice: 'Forecasts are estimates and may change.'
+  };
+}
+
 /**
  * Preloads all essential datasets in parallel
  */
 export async function loadAppData() {
-  const [markets, crops, dataStatus, distances] = await Promise.all([
+  const [markets, crops, dataStatus, distances, mandisWeather] = await Promise.all([
     fetchMarkets(),
     fetchCrops(),
     fetchDataStatus(),
-    fetchDistances()
+    fetchDistances(),
+    fetchMandisWeather()
   ]);
 
   return {
@@ -229,6 +312,7 @@ export async function loadAppData() {
     crops,
     dataStatus,
     distances,
+    mandisWeather,
     isLiveApi: Boolean(_cache.isLiveApiAvailable)
   };
 }
@@ -239,6 +323,9 @@ export default {
   fetchPrices,
   fetchDistances,
   fetchDataStatus,
+  fetchMandisWeather,
+  fetchWeather,
   loadAppData,
   checkBackendHealth
 };
+

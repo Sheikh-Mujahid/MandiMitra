@@ -167,3 +167,35 @@ def test_rank_api_endpoint():
     # Check that netReturn is strictly descending
     net_returns = [r["netReturn"] for r in data["recommendations"]]
     assert net_returns == sorted(net_returns, reverse=True)
+
+def test_weather_endpoint():
+    response = client.get("/weather?lat=20.932&lon=77.7523")
+    assert response.status_code == 200
+    data = response.json()
+    assert "status" in data
+    assert data["status"] in ["available", "unavailable"]
+    assert "notice" in data
+
+def test_weather_mandis_endpoint():
+    response = client.get("/weather/mandis")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "ok"
+    assert "mandis" in data
+    assert len(data["mandis"]) >= 8
+    assert "notice" in data
+
+def test_weather_failure_fallback(monkeypatch):
+    import urllib.request
+    def mock_urlopen(*args, **kwargs):
+        raise urllib.error.URLError("Network unreachable")
+    
+    monkeypatch.setattr(urllib.request, "urlopen", mock_urlopen)
+    # Query with a coordinate that hasn't been cached
+    response = client.get("/weather?lat=99.999&lon=99.999")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "unavailable"
+    assert "unavailable" in data["message"].lower()
+    assert data["daily"] is None
+

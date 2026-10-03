@@ -129,6 +129,29 @@ export const translations = {
     modalRule4Title: '4. Core Engine Mathematical Formulas',
     acknowledgeBtn: 'Acknowledge & Close',
 
+    // Weather Feature
+    weatherLabel: 'Weather',
+    includeWeatherRisk: 'Include weather risk in ranking',
+    includeWeatherRiskShort: 'Weather Risk',
+    weatherRiskDesc: 'Applies small advisory deduction (0.5% caution, 1.5% risk) for transit rain or storm hazard.',
+    weatherRiskOff: 'Off (Pure price/logistics)',
+    weatherRiskOn: 'On (Risk-adjusted ranking)',
+    weather3DayForecast: '3-Day Weather Forecast',
+    weatherAdvisory: 'Forecasts are estimates and may change.',
+    weatherAdvisoryShort: 'Estimate, may change',
+    weatherClear: 'Clear',
+    weatherCaution: 'Caution',
+    weatherRisk: 'Risk',
+    weatherUnavailable: 'Weather unavailable',
+    weatherUpdated: 'Forecast updated',
+    weatherSampleData: 'Sample Data',
+    weatherWarningTitle: 'Weather Risk Advisory',
+    rainChance: 'Rain Chance',
+    precipSum: 'Precipitation',
+    windSpeed: 'Wind Gusts',
+    maxTemp: 'Max Temp',
+    presetWeatherDemo: 'Akola Storm Risk Demo',
+
     // Footer
     footerDisclaimer: 'Prices are MODAL prices. Price forecasts are estimate, not guaranteed. Sourced from daily-updated official mandi data.'
   },
@@ -258,6 +281,29 @@ export const translations = {
     modalRule4Title: '4. मूल निर्णय सूत्र (Core Mathematical Formula)',
     acknowledgeBtn: 'समझ गया / बंद करें',
 
+    // Weather Feature
+    weatherLabel: 'मौसम',
+    includeWeatherRisk: 'रैंकिंग में मौसम जोखिम शामिल करें',
+    includeWeatherRiskShort: 'मौसम जोखिम',
+    weatherRiskDesc: 'परिवहन के दौरान बारिश/तूफान के लिए छोटी सलाहकारी कटौती (0.5% सावधानी, 1.5% जोखिम) लागू करता है।',
+    weatherRiskOff: 'बंद (डिफ़ॉल्ट: केवल भाव व ढुलाई)',
+    weatherRiskOn: 'चालू (मौसम जोखिम समायोजित)',
+    weather3DayForecast: '3-दिवसीय मौसम पूर्वानुमान',
+    weatherAdvisory: 'मौसम पूर्वानुमान केवल अनुमान हैं और बदल सकते हैं।',
+    weatherAdvisoryShort: 'अनुमान, बदल सकता है',
+    weatherClear: 'साफ',
+    weatherCaution: 'सावधानी',
+    weatherRisk: 'जोखिम',
+    weatherUnavailable: 'मौसम डेटा अनुपलब्ध',
+    weatherUpdated: 'पूर्वानुमान अपडेट',
+    weatherSampleData: 'नमूना डेटा',
+    weatherWarningTitle: 'मौसम जोखिम चेतावनी',
+    rainChance: 'बारिश की संभावना',
+    precipSum: 'वर्षा मात्रा',
+    windSpeed: 'हवा की गति',
+    maxTemp: 'अधिकतम तापमान',
+    presetWeatherDemo: 'अकोला आंधी-तूफान डेमो',
+
     // Footer
     footerDisclaimer: 'कीमतें मॉडल भाव हैं। मूल्य पूर्वानुमान अनुमान हैं, गारंटी नहीं। स्रोत: दैनिक अद्यतन आधिकारिक मंडी डेटा।'
   },
@@ -386,6 +432,29 @@ export const translations = {
     modalRule3Text: 'ही माहिती राज्य कृषी पणन मंडळे (APMC) आणि राष्ट्रीय कृषी बाजार (Agmarknet) कडून दररोज सायंकाळी अद्यतनित अधिकृत अहवालांवरून घेतली जाते.',
     modalRule4Title: '४. मूळ निर्णय सूत्रे (Core Mathematical Formula)',
     acknowledgeBtn: 'समजले / बंद करा',
+
+    // Weather Feature
+    weatherLabel: 'हवामान',
+    includeWeatherRisk: 'क्रमवारीत हवामान जोखीम समाविष्ट करा',
+    includeWeatherRiskShort: 'हवामान जोखीम',
+    weatherRiskDesc: 'वाहतुकीदरम्यान पाऊस/वादळासाठी छोटी सल्लागार वजावट (०.५% दक्षता, १.५% जोखीम) लागू करते.',
+    weatherRiskOff: 'बंद (मूळ: केवळ भाव व वाहतूक)',
+    weatherRiskOn: 'सुरू (हवामान जोखीम समायोजित)',
+    weather3DayForecast: '३-दिवसीय हवामान अंदाज',
+    weatherAdvisory: 'हवामान अंदाज हे केवळ कयास असून बदलू शकतात.',
+    weatherAdvisoryShort: 'अंदाज, बदलू शकतो',
+    weatherClear: 'स्वच्छ',
+    weatherCaution: 'दक्षता',
+    weatherRisk: 'जोखीम',
+    weatherUnavailable: 'हवामान माहिती अनुपलब्ध',
+    weatherUpdated: 'हवामान अपडेट',
+    weatherSampleData: 'नमुना डेटा',
+    weatherWarningTitle: 'हवामान जोखीम सल्ला',
+    rainChance: 'पावसाची शक्यता',
+    precipSum: 'पाऊस प्रमाण',
+    windSpeed: 'वाऱ्याचा वेग',
+    maxTemp: 'कमाल तापमान',
+    presetWeatherDemo: 'अकोला वादळ जोखीम डेमो',
 
     // Footer
     footerDisclaimer: 'किंमती मॉडेल भाव आहेत. अंदाज हमी नाही. स्रोत: दैनिक अद्यतनित अधिकृत बाजार समिती माहिती.'

@@ -32,7 +32,10 @@ MandiMitra AI provides an interactive, client-side decision dashboard that compu
 - **Instant Client-Side Calculations**: Zero server round-trips for slider changes—rankings, charts, routes, and explanations update under 5 milliseconds.
 - **Explainable AI ("Why this market?")**: Crystal-clear structured rationale comparing the #1 recommendation against the runner-up and nearest APMC.
 - **Interactive What-If Simulation**: Test what happens if diesel prices rise, harvest quantity changes, or market rates drop ±10%.
+- **Weather-Aware Intelligence & Risk Advisory**: Integrates live 3-day Open-Meteo forecasts for each mandi and farm location. Interactive weather chips display weather code icons, max temperatures, and precipitation probabilities. High-visibility warning banners alert farmers when the #1 market faces rain or storm risks, recommending the best clear-weather alternative and calculating the exact profit difference.
+- **Audited Weather Risk Adjustments**: Optional risk adjustment toggle ("Include weather risk in ranking") applies small, documented penalties (0% clear, 0.5% caution, 1.5% risk) only when activated—weather never silently alters default rankings.
 - **Farmer-Friendly Multilingual UI**: Full native support for **English**, **Hindi (हिंदी)**, and **Marathi (मराठी)** with large readable fonts and high-contrast badges.
+- **Pitch Deck & Presentation**: Complete slide-by-slide speaker notes and demo guide available in [docs/GAMMA_DECK_NOTES.md](docs/GAMMA_DECK_NOTES.md).
 
 ---
 
@@ -49,19 +52,20 @@ flowchart TD
 
     subgraph BackendAPI["Backend Service (FastAPI)"]
         FastAPI["FastAPI App (backend/main.py)"]
-        FastAPI --> Endpoints["/markets, /crops, /prices<br/>/distances, /data-status"]
+        FastAPI --> Endpoints["/markets, /crops, /prices<br/>/distances, /data-status<br/>/weather, /weather/mandis"]
         DataFiles -.->|Auto-reloads on file mtime change| FastAPI
         DistFile -.-> FastAPI
+        OpenMeteo["Open-Meteo API"] -->|3-Day Daily Forecast| FastAPI
     end
 
     subgraph ClientUI["Frontend Dashboard (React + Vite + Leaflet)"]
         Form["Farmer Input & Geo-snap<br/>(Origin, Crop, Quantity)"] --> Context["FarmerContext State"]
-        Sim["What-If Simulator<br/>(Freight Slider, Round-Trip, ±10% Trend)"] --> Context
-        Context --> Engine["Pure JS Recommendation Engine<br/>(src/engine/engine.js)"]
+        Sim["What-If Simulator<br/>(Freight Slider, Round-Trip, Weather Risk Toggle)"] --> Context
+        Context --> Engine["Pure JS Recommendation Engine<br/>(src/engine/engine.js + weather.js)"]
         
-        Engine --> RecCard["Top Recommendation Card<br/>('Sell at Market' + Net Return)"]
-        Engine --> RankedTable["Ranked APMC Comparison Table<br/>(Net Return, Transport, Freshness Dot)"]
-        Engine --> WhyModal["'Why Chosen?' Waterfall Breakdown<br/>(Revenue vs Transport vs Net Margin)"]
+        Engine --> RecCard["Top Recommendation Card<br/>('Sell at Market' + Net Return + Weather Warning)"]
+        Engine --> RankedTable["Ranked APMC Comparison Table<br/>(Net Return, Weather Chips, Transport)"]
+        Engine --> WhyModal["'Why Chosen?' Waterfall Breakdown<br/>(Revenue vs Transport vs 3-Day Forecast)"]
         Engine --> CompareView["Side-by-Side APMC Comparator"]
         Engine --> Charts["Recharts 30-Day Modal Price Trends<br/>& Confidence Indicators"]
         Engine --> LeafletMap["Interactive Leaflet Map<br/>(APMC Markers, Routes, Popups)"]
@@ -69,7 +73,7 @@ flowchart TD
     end
 
     DataPipeline -->|Daily Git Commit & Deploy| ClientUI
-    BackendAPI -.->|REST Fallback| ClientUI
+    BackendAPI -.->|REST / Weather Fallback| ClientUI
 ```
 
 ---
@@ -83,6 +87,7 @@ Existing government portals perform vital public reporting, but they were built 
 | **Primary Purpose** | Historical price record & daily modal price bulletin | Online auction & inter-mandi trade platform | **Farmer net-profit optimization & logistics decision tool** |
 | **Transport Factoring** | ❌ None (assumes zero transport cost) | ❌ Disconnected from farm logistics | ✅ **Full vehicle capacity, ₹/km rate & round-trip deadheading model** |
 | **Hidden Cost Deductions** | ❌ None | ⚠️ Variable trading fees | ✅ **Loading (hamali), weighment (tolai), APMC cess & transit spoilage** |
+| **Weather Risk Advisory** | ❌ None | ❌ None | ✅ **3-Day Open-Meteo forecast, storm warning & optional risk-adjusted ranking** |
 | **Decision Metric** | Gross Modal Price (₹/q) | Auction Bid (₹/q) | **True Net In-Pocket Cash (₹)** |
 | **What-If Simulation** | ❌ Static tables | ❌ No simulation | ✅ **Instant sliders for quantity, transport rates, and price shocks (±10%)** |
 | **Explainability** | ❌ Raw numbers only | ❌ None | ✅ **"Why this market?" plain-language rationale & waterfall breakdown** |
@@ -123,17 +128,23 @@ $$\text{EffectiveFreightPerKm} = \text{vehiclesNeeded} \times \text{ratePerKm} \
 $$\mathbf{breakEvenDistance} = \text{distance}_A + \frac{\Delta\text{Revenue}}{\text{EffectiveFreightPerKm}}$$
 *If market $B$ is located further than this distance, the farmer is financially worse off despite the higher price.*
 
+### 7. Weather Risk Adjustment (Optional Toggle)
+$$\mathbf{weatherPenalty} = \begin{cases} 0.0\% & \text{Level "clear"} \\ 0.5\% & \text{Level "caution" (rain 5--20mm or heat } > 40^\circ\text{C)} \\ 1.5\% & \text{Level "risk" (rain } \ge 20\text{mm, prob } \ge 70\%, \text{thunderstorm, or wind } > 40\text{km/h)} \end{cases}$$
+$$\mathbf{netReturn}_{\text{weather}} = \mathbf{netReturn} \times (1 - \mathbf{weatherPenalty})$$
+*Crucial Design Rule: This adjustment is applied **strictly when the "Include weather risk in ranking" toggle is ON**. Default is OFF, guaranteeing that default rankings are never altered silently.*
+
 ---
 
 ## 🛡️ Data Source & System Boundaries
 
-### Official Source
-Data is sourced from the official **Agmarknet Daily Price Feed** via the Open Government Data (OGD) Platform India ([data.gov.in](https://data.gov.in)), resource ID `9ef84268-d588-465a-a308-a864a43d0070`.
+### Official Sources
+1. **Agmarknet Daily Price Feed**: Sourced via the Open Government Data (OGD) Platform India ([data.gov.in](https://data.gov.in)), resource ID `9ef84268-d588-465a-a308-a864a43d0070`.
+2. **Open-Meteo Weather Forecast API**: Live 3-day daily forecasts queried without API keys via [open-meteo.com](https://open-meteo.com/v1/forecast) using verified APMC coordinates. Cached in-memory for 30–60 minutes with graceful offline fallback.
 
 ### Transparent Limitations
 1. **Modal Prices, Not Live Ticks**: Mandi prices are official daily **modal prices** (the single price at which the highest volume traded during the day). They are not live real-time auction bids.
 2. **Quality & Grade Dependency**: Official modal prices reflect standard fair average quality (FAQ). Actual realization depends on variety, moisture content, cleanliness, and auction grading.
-3. **Price Forecast Disclaimer**: Near-term trend adjustments and 3-day wait scenarios are algorithmic statistical indicators and are explicitly marked **"Estimate, not guaranteed"**.
+3. **Price & Weather Forecast Disclaimer**: Near-term trend adjustments, 3-day wait scenarios, and weather predictions are algorithmic statistical indicators and are explicitly marked **"Forecasts and estimates may change."**
 4. **Daily Sync Frequency**: Mandis publish summaries once daily after trading closes (typically between 17:00 and 20:00 IST). Our daily workflow syncs updates at 02:00 UTC (07:30 IST) ready for morning dispatch planning.
 
 ---

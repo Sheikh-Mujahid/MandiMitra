@@ -26,6 +26,7 @@ export function FarmerProvider({ children }) {
     ratePerKm: 18,
     roundTrip: false,
     priceAdjust: 0,
+    includeWeatherRisk: false,
     extraCosts: {
       loadingPerQntl: 12.0,
       marketFeePercent: 1.0,
@@ -172,9 +173,11 @@ export function FarmerProvider({ children }) {
       priceAdjust: formState.priceAdjust,
       roundTrip: formState.roundTrip,
       extraCosts: formState.extraCosts,
-      lang
+      lang,
+      includeWeatherRisk: formState.includeWeatherRisk,
+      weatherData: apiData.mandisWeather
     });
-  }, [formState, lang]);
+  }, [formState, lang, apiData.mandisWeather]);
 
   const value = {
     lang,

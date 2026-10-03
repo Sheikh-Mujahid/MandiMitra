@@ -11,6 +11,8 @@ import {
   breakEvenExtraDistance,
   sellNowVsWait,
   explainRecommendation,
+  classifyWeather,
+  weatherRiskPenalty,
   VEHICLE_PRESETS
 } from './engine.js';
 
@@ -357,4 +359,285 @@ describe('MandiMitra Recommendation Engine Unit Tests', () => {
     expect(waitAnalysis.scenarios).toHaveProperty('high');
     expect(waitAnalysis.disclaimer).toMatch(/Estimate, not guaranteed/i);
   });
+
+  // 11. Weather condition classification thresholds
+  it('classifies weather conditions into clear, caution, and risk using configurable thresholds', () => {
+    // Clear conditions
+    const clearDay = {
+      time: ['2026-10-03'],
+      weather_code: [0],
+      temperature_2m_max: [32.0],
+      precipitation_sum: [0.0],
+      precipitation_probability_max: [5],
+      wind_speed_10m_max: [12.0]
+    };
+    expect(classifyWeather(clearDay).level).toBe('clear');
+
+    // Caution: Moderate rain (8 mm)
+    const cautionRain = {
+      time: ['2026-10-03'],
+      weather_code: [61],
+      temperature_2m_max: [28.0],
+      precipitation_sum: [8.5],
+      precipitation_probability_max: [50],
+      wind_speed_10m_max: [18.0]
+    };
+    const cRes = classifyWeather(cautionRain);
+    expect(cRes.level).toBe('caution');
+    expect(cRes.reasons.some(r => r.includes('Moderate rainfall'))).toBe(true);
+
+    // Caution: Extreme heat (43°C)
+    const extremeHeat = {
+      time: ['2026-10-03'],
+      weather_code: [0],
+      temperature_2m_max: [43.5],
+      precipitation_sum: [0.0],
+      precipitation_probability_max: [0],
+      wind_speed_10m_max: [15.0]
+    };
+    expect(classifyWeather(extremeHeat).level).toBe('caution');
+
+    // Risk: Heavy precipitation (25 mm)
+    const riskPrecip = {
+      time: ['2026-10-03'],
+      weather_code: [65],
+      temperature_2m_max: [26.0],
+      precipitation_sum: [25.0],
+      precipitation_probability_max: [80],
+      wind_speed_10m_max: [25.0]
+    };
+    const rRes = classifyWeather(riskPrecip);
+    expect(rRes.level).toBe('risk');
+    expect(rRes.reasons.some(r => r.includes('Heavy rainfall'))).toBe(true);
+
+    // Risk: Thunderstorm code (WMO 95)
+    const storm = {
+      time: ['2026-10-03'],
+      weather_code: [95],
+      temperature_2m_max: [27.0],
+      precipitation_sum: [12.0],
+      precipitation_probability_max: [75],
+      wind_speed_10m_max: [30.0]
+    };
+    expect(classifyWeather(storm).level).toBe('risk');
+
+    // Risk: Strong wind (50 km/h)
+    const highWind = {
+      time: ['2026-10-03'],
+      weather_code: [1],
+      temperature_2m_max: [30.0],
+      precipitation_sum: [0.0],
+      precipitation_probability_max: [10],
+      wind_speed_10m_max: [52.0]
+    };
+    expect(classifyWeather(highWind).level).toBe('risk');
+  });
+
+  // 12. Weather risk penalty rate calculation
+  it('applies small documented risk penalties: 0% for clear, 0.5% for caution, 1.5% for risk', () => {
+    const netReturn = 100000;
+    expect(weatherRiskPenalty('clear', netReturn)).toBe(0);
+    expect(weatherRiskPenalty('caution', netReturn)).toBe(500); // 0.5% of 100,000
+    expect(weatherRiskPenalty('risk', netReturn)).toBe(1500);   // 1.5% of 100,000
+  });
+
+  // 13. Weather risk toggle behavior in rankMarkets
+  it('ranking is unchanged when weather toggle is OFF, and changes when toggle is ON', () => {
+    // Custom two markets: Market A has slightly higher profit but severe storm (risk)
+    // Market B has slightly lower profit but clear weather
+    const twoMarkets = [
+      {
+        id: 'stormy_mandi',
+        market_id: 'stormy_mandi',
+        name: 'Stormy Mandi',
+        state: 'Maharashtra',
+        district: 'Akola',
+        lat: 20.7,
+        lon: 77.0,
+        marketFeePercent: 1.0,
+        commissionPercent: 0.0,
+        weighmentPerQntl: 5.0,
+        loadingPerQntl: 10.0
+      },
+      {
+        id: 'sunny_mandi',
+        market_id: 'sunny_mandi',
+        name: 'Sunny Mandi',
+        state: 'Maharashtra',
+        district: 'Amravati',
+        lat: 20.9,
+        lon: 77.7,
+        marketFeePercent: 1.0,
+        commissionPercent: 0.0,
+        weighmentPerQntl: 5.0,
+        loadingPerQntl: 10.0
+      }
+    ];
+
+    const twoPrices = {
+      crops: [{ id: 'wheat', name: 'Wheat', spoilageFactor: 0.0 }],
+      marketPrices: {
+        wheat: [
+          {
+            marketId: 'stormy_mandi',
+            modalPrice: 3000, // Slightly higher
+            trendAdjustment: 0.0,
+            confidence: 95,
+            dataAgeDays: 0,
+            trend: 'STABLE',
+            history: [3000]
+          },
+          {
+            marketId: 'sunny_mandi',
+            modalPrice: 2980, // Slightly lower
+            trendAdjustment: 0.0,
+            confidence: 95,
+            dataAgeDays: 0,
+            trend: 'STABLE',
+            history: [2980]
+          }
+        ]
+      }
+    };
+
+    const twoDistances = {
+      roadWindingFactor: 1.0,
+      farmerOrigins: [
+        {
+          id: 'farm_origin',
+          lat: 20.9,
+          lon: 77.7,
+          distancesKm: {
+            stormy_mandi: 40,
+            sunny_mandi: 40
+          }
+        }
+      ]
+    };
+
+    const customWeather = {
+      mandis: {
+        stormy_mandi: {
+          daily: {
+            time: ['2026-10-03'],
+            weather_code: [95], // Thunderstorm
+            temperature_2m_max: [28.0],
+            precipitation_sum: [30.0],
+            precipitation_probability_max: [90],
+            wind_speed_10m_max: [40.0]
+          }
+        },
+        sunny_mandi: {
+          daily: {
+            time: ['2026-10-03'],
+            weather_code: [0], // Clear
+            temperature_2m_max: [33.0],
+            precipitation_sum: [0.0],
+            precipitation_probability_max: [0],
+            wind_speed_10m_max: [10.0]
+          }
+        }
+      }
+    };
+
+    // When toggle is OFF: Stormy Mandi wins purely on price/logistics
+    const toggleOff = rankMarkets({
+      crop: 'wheat',
+      quantity: 50,
+      location: 'farm_origin',
+      vehicle: 'pickup',
+      ratePerKm: 20,
+      includeWeatherRisk: false,
+      weatherData: customWeather,
+      customMarkets: twoMarkets,
+      customPrices: twoPrices,
+      customDistances: twoDistances
+    });
+
+    expect(toggleOff[0].marketId).toBe('stormy_mandi');
+    expect(toggleOff[0].weather.level).toBe('risk');
+    expect(toggleOff[0].weatherRiskPenalty).toBe(0); // Penalty is 0 when toggle is off
+
+    // When toggle is ON: 1.5% weather risk penalty is applied to Stormy Mandi,
+    // which lowers its riskAdjustedNetReturn and flips Sunny Mandi to #1!
+    const toggleOn = rankMarkets({
+      crop: 'wheat',
+      quantity: 50,
+      location: 'farm_origin',
+      vehicle: 'pickup',
+      ratePerKm: 20,
+      includeWeatherRisk: true,
+      weatherData: customWeather,
+      customMarkets: twoMarkets,
+      customPrices: twoPrices,
+      customDistances: twoDistances
+    });
+
+    expect(toggleOn[0].marketId).toBe('sunny_mandi'); // Flipped!
+    expect(toggleOn[0].rank).toBe(1);
+    expect(toggleOn[1].marketId).toBe('stormy_mandi');
+    expect(toggleOn[1].weatherRiskPenalty).toBeGreaterThan(0); // Penalty applied
+  });
+
+  // 14. Weather API failure fallback
+  it('handles missing or failed weather data gracefully without crashing or altering baseline ranking', () => {
+    // Missing daily object
+    const brokenWeather = classifyWeather(null);
+    expect(brokenWeather.level).toBe('clear');
+    expect(brokenWeather.isAvailable).toBe(false);
+
+    // Empty arrays
+    const emptyWeather = classifyWeather({ time: [] });
+    expect(emptyWeather.level).toBe('clear');
+    expect(emptyWeather.isAvailable).toBe(false);
+
+    // rankMarkets with null weather data runs without error
+    const res = rankMarkets({
+      crop: 'soybean',
+      quantity: 30,
+      location: 'farm_origin',
+      weatherData: null,
+      customMarkets: mockMarkets,
+      customPrices: mockPrices,
+      customDistances: mockDistances
+    });
+    expect(res.length).toBeGreaterThan(0);
+    expect(res[0].weather).toBeDefined();
+  });
+
+  // 15. explainRecommendation with weather advisory and clear alternative
+  it('adds weather warning to explainRecommendation when top market has risk or caution', () => {
+    const stormyTop = {
+      market: { id: 'akola_apmc', name: 'Akola APMC' },
+      netReturn: 142000,
+      price: 2960,
+      distanceKm: 41,
+      transport: 1200,
+      weather: {
+        level: 'risk',
+        reasons: ['Heavy rainfall expected (28.5 mm)']
+      }
+    };
+
+    const clearAlt = {
+      market: { id: 'amravati_apmc', name: 'Amravati APMC' },
+      netReturn: 141000,
+      weather: { level: 'clear', reasons: [] }
+    };
+
+    const explanation = explainRecommendation({
+      top: stormyTop,
+      clearAlternative: clearAlt,
+      lang: 'en'
+    });
+
+    expect(explanation.summary).toContain('Weather Advisory');
+    expect(explanation.summary).toContain('Akola APMC');
+    expect(explanation.summary).toContain('Amravati APMC');
+    expect(explanation.summary).toContain('₹1,000');
+    expect(explanation.structured.hasWeatherWarning).toBe(true);
+    expect(explanation.structured.clearAlternativeName).toBe('Amravati APMC');
+    expect(explanation.structured.clearAlternativeDiffRs).toBe(1000);
+  });
 });
+

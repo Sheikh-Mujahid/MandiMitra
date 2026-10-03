@@ -23,6 +23,7 @@ export function explainRecommendation({
   runnerUp = null,
   nearest = null,
   highestPriceMarket = null,
+  clearAlternative = null,
   cropName = 'crop',
   lang = 'en'
 } = {}) {
@@ -55,6 +56,10 @@ export function explainRecommendation({
       : 0;
   }
 
+  const weatherLevel = top.weather?.level || top.weatherLevel || 'clear';
+  const weatherReasons = top.weather?.reasons || top.weatherReasons || [];
+  const hasWeatherWarning = weatherLevel === 'risk' || weatherLevel === 'caution';
+
   const structured = {
     topMarketName: topName,
     topNetReturn: topNet,
@@ -68,10 +73,43 @@ export function explainRecommendation({
     highestPriceMarketName: highestPriceMarket?.market?.name || null,
     highestPriceModal: highestPriceMarket ? Math.round(highestPriceMarket.price || highestPriceMarket.modalPrice) : null,
     trend: top.trend || 'STABLE',
-    trendAdjustmentPct: Math.round((top.trendAdjustment || 0) * 1000) / 10
+    trendAdjustmentPct: Math.round((top.trendAdjustment || 0) * 1000) / 10,
+    weather: { level: weatherLevel, reasons: weatherReasons },
+    hasWeatherWarning,
+    clearAlternativeName: clearAlternative?.market?.name || null,
+    clearAlternativeDiffRs: clearAlternative ? Math.max(0, Math.round(top.netReturn - clearAlternative.netReturn)) : null
   };
 
   let summary = '';
+
+  const appendWeatherWarning = (text) => {
+    if (!hasWeatherWarning) {
+      return text;
+    }
+    const isRisk = weatherLevel === 'risk';
+    const reasonText = weatherReasons[0] || (isRisk ? 'Adverse weather' : 'Unfavorable weather');
+    let warning = '';
+    if (clearAlternative && clearAlternative.market?.id !== top.market?.id) {
+      const altName = clearAlternative.market.name;
+      const diff = Math.max(0, Math.round(top.netReturn - clearAlternative.netReturn));
+      if (lang === 'mr') {
+        warning = ` ⚠️ हवामान सल्ला: ${topName} येथे ${reasonText.toLowerCase()} संभवतो. ${altName} येथे स्वच्छ हवामान असून निव्वळ नफा फक्त ₹${diff.toLocaleString('en-IN')} कमी आहे.`;
+      } else if (lang === 'hi') {
+        warning = ` ⚠️ मौसम चेतावनी: ${topName} में ${reasonText.toLowerCase()} की आशंका है। ${altName} में साफ मौसम है और यह केवल ₹${diff.toLocaleString('en-IN')} कम शुद्ध लाभ देता है।`;
+      } else {
+        warning = ` ⚠️ Weather Advisory: ${reasonText} near ${topName} on travel day. ${altName} has clear weather and is ₹${diff.toLocaleString('en-IN')} lower net return.`;
+      }
+    } else {
+      if (lang === 'mr') {
+        warning = ` ⚠️ हवामान सल्ला: ${topName} येथे ${reasonText.toLowerCase()} संभवतो; मालाची काळजी घ्या.`;
+      } else if (lang === 'hi') {
+        warning = ` ⚠️ मौसम चेतावनी: ${topName} में ${reasonText.toLowerCase()} की आशंका है; माल की सुरक्षा का ध्यान रखें।`;
+      } else {
+        warning = ` ⚠️ Weather Advisory: ${reasonText} near ${topName} on travel day.`;
+      }
+    }
+    return text + warning;
+  };
 
   // Case 1: Highest posted price lost to a more profitable market
   if (isHighestPriceNotHighestProfit && highestPriceMarket) {
@@ -87,7 +125,7 @@ export function explainRecommendation({
     } else {
       summary = `Highest price is not highest profit: Even though ${hpName} offers the highest posted price of ₹${hpPrice.toLocaleString('en-IN')}/q, its distance of ${hpDist} km incurs ₹${hpTransport.toLocaleString('en-IN')} in transport costs. Choosing ${topName} saves freight logistics and delivers the maximum in-pocket net profit of ₹${topNet.toLocaleString('en-IN')}.`;
     }
-    return { structured, summary };
+    return { structured, summary: appendWeatherWarning(summary) };
   }
 
   // Case 2: Outperforming nearest market and runner-up
@@ -103,7 +141,7 @@ export function explainRecommendation({
     } else {
       summary = `Selected ${topName} as #1 recommendation: Favorable modal price (₹${topPrice.toLocaleString('en-IN')}/q) yields +₹${marginRs.toLocaleString('en-IN')} (+${marginPct}%) higher net return than ${runnerName}, easily overcoming ₹${topTransport.toLocaleString('en-IN')} transport across +${extraDist} km extra distance compared to ${nearName}.`;
     }
-    return { structured, summary };
+    return { structured, summary: appendWeatherWarning(summary) };
   }
 
   // Case 3: Default comparison against runner-up
@@ -116,7 +154,7 @@ export function explainRecommendation({
     } else {
       summary = `Selected ${topName} as #1 recommendation: Superior modal price (₹${topPrice.toLocaleString('en-IN')}/q) delivers ₹${marginRs.toLocaleString('en-IN')} (+${marginPct}%) higher net return than ${runnerName} after all transport and handling deductions.`;
     }
-    return { structured, summary };
+    return { structured, summary: appendWeatherWarning(summary) };
   }
 
   // Single market scenario
@@ -128,5 +166,5 @@ export function explainRecommendation({
     summary = `${topName} delivers the highest expected net return of ₹${topNet.toLocaleString('en-IN')} for your ${cropName} based on daily-updated official mandi modal prices.`;
   }
 
-  return { structured, summary };
+  return { structured, summary: appendWeatherWarning(summary) };
 }

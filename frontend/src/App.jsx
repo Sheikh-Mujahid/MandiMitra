@@ -14,9 +14,9 @@ import BreakEvenDistanceCard from './components/BreakEvenDistanceCard';
 import SellNowVsWaitCard from './components/SellNowVsWaitCard';
 import PriceAlertBanner from './components/PriceAlertBanner';
 
-import { rankMarkets } from './engine/engine';
+import { rankMarkets, SAMPLE_DEMO_WEATHER } from './engine/engine';
 import { translations } from './i18n/translations';
-import { fetchDataStatus } from './api';
+import { fetchDataStatus, fetchMandisWeather } from './api';
 import pricesData from '../../data/prices.json';
 import distancesData from '../../data/distances.json';
 import lastUpdatedData from '../../data/last_updated.json';
@@ -40,6 +40,7 @@ export default function App() {
   const [isDisclaimerOpen, setIsDisclaimerOpen] = useState(false);
   const [isWhyOpen, setIsWhyOpen] = useState(false);
   const [dataStatus, setDataStatus] = useState(null);
+  const [weatherData, setWeatherData] = useState(SAMPLE_DEMO_WEATHER);
 
   // Recommendation flip highlight banner state
   const prevTopIdRef = useRef(null);
@@ -47,9 +48,12 @@ export default function App() {
 
   const t = translations[lang] || translations.en;
 
-  // Load data-status on mount
+  // Load data-status and mandis weather on mount
   useEffect(() => {
     fetchDataStatus().then(setDataStatus).catch(() => {});
+    fetchMandisWeather().then((data) => {
+      if (data && data.mandis) setWeatherData(data);
+    }).catch(() => {});
   }, []);
 
   const defaultAssumptions = {
@@ -60,6 +64,7 @@ export default function App() {
     ratePerKm: 35,
     priceAdjust: 0,
     roundTrip: false,
+    includeWeatherRisk: false, // Default OFF - pure price/logistics ranking
     extraCosts: {
       loadingPerQntl: 12.0,
       marketFeePercent: 1.0,
@@ -82,9 +87,11 @@ export default function App() {
       priceAdjust: assumptions.priceAdjust,
       roundTrip: assumptions.roundTrip,
       extraCosts: assumptions.extraCosts,
-      lang
+      lang,
+      includeWeatherRisk: assumptions.includeWeatherRisk,
+      weatherData
     });
-  }, [assumptions, lang]);
+  }, [assumptions, lang, weatherData]);
 
   const topMandi = rankedMarkets[0];
   const runnerUp = rankedMarkets[1] || null;
@@ -98,6 +105,12 @@ export default function App() {
   const highestPriceMandi = useMemo(() => {
     if (rankedMarkets.length === 0) return null;
     return rankedMarkets.reduce((prev, curr) => (curr.price > prev.price ? curr : prev));
+  }, [rankedMarkets]);
+
+  // Find best alternative market with clear weather
+  const clearAlternative = useMemo(() => {
+    if (rankedMarkets.length === 0) return null;
+    return rankedMarkets.find(c => c.weather?.level === 'clear') || null;
   }, [rankedMarkets]);
 
   // Track changes to #1 recommendation and show flip banner
@@ -188,6 +201,28 @@ export default function App() {
           commissionPercent: 0.0,
           weighmentPerQntl: 5.0,
           spoilageFactor: 0.00012
+        }
+      });
+    } else if (presetKey === 'akola_weather_demo') {
+      // Akola Storm Demo:
+      // Akola has thunderstorm/heavy rain (WMO 95, 28.5mm) in sample weather.
+      // From Murtizapur at ₹35/km freight, Akola is #1 and Amravati is #2.
+      // Toggling weather risk ON penalizes Akola by 1.5% and flips Amravati to #1!
+      setAssumptions({
+        crop: 'wheat',
+        quantity: 50,
+        location: 'murtizapur_town',
+        vehicle: 'pickup',
+        ratePerKm: 35,
+        priceAdjust: 0,
+        roundTrip: false,
+        includeWeatherRisk: false,
+        extraCosts: {
+          loadingPerQntl: 10.0,
+          marketFeePercent: 1.0,
+          commissionPercent: 0.0,
+          weighmentPerQntl: 5.5,
+          spoilageFactor: 0.00010
         }
       });
     }
@@ -282,6 +317,9 @@ export default function App() {
               lang={lang}
               cropName={cropDisplayName}
               onOpenWhy={() => setIsWhyOpen(true)}
+              clearAlternative={clearAlternative}
+              includeWeatherRisk={assumptions.includeWeatherRisk}
+              onToggleWeatherRisk={() => setAssumptions(p => ({ ...p, includeWeatherRisk: !p.includeWeatherRisk }))}
             />
 
             {/* Quick Insights Strip below Hero */}

@@ -17,6 +17,8 @@ Endpoints required by Task 4:
 
 import json
 import os
+import time
+import urllib.request
 from datetime import datetime, date
 from pathlib import Path
 from typing import Dict, Any, List, Optional
@@ -269,6 +271,105 @@ def get_distances(
 def get_origins():
     dist_data = get_cached_json("distances.json")
     return dist_data.get("farmerOrigins", [])
+
+# --- WEATHER FORECAST ENDPOINTS (Open-Meteo, 30-min in-memory cache) ---
+
+_WEATHER_CACHE: Dict[str, Any] = {}
+_WEATHER_TIMESTAMPS: Dict[str, float] = {}
+WEATHER_CACHE_TTL = 1800.0 # 30 minutes
+
+def fetch_open_meteo_forecast(lat: float, lon: float) -> Dict[str, Any]:
+    """
+    Fetches 3-day daily weather forecast from Open-Meteo with in-memory caching and safe fallback.
+    Never crashes the application.
+    """
+    cache_key = f"{round(lat, 4)}_{round(lon, 4)}"
+    now = time.time()
+
+    # Check unexpired cache
+    if cache_key in _WEATHER_CACHE:
+        age = now - _WEATHER_TIMESTAMPS.get(cache_key, 0)
+        if age < WEATHER_CACHE_TTL:
+            return _WEATHER_CACHE[cache_key]
+
+    url = (
+        f"https://api.open-meteo.com/v1/forecast"
+        f"?latitude={lat}&longitude={lon}"
+        f"&daily=weather_code,temperature_2m_max,precipitation_sum,precipitation_probability_max,wind_speed_10m_max"
+        f"&timezone=Asia%2FKolkata&forecast_days=3"
+    )
+
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "MandiMitraAI/1.0"})
+        with urllib.request.urlopen(req, timeout=4.0) as resp:
+            if resp.status == 200:
+                raw_data = json.loads(resp.read().decode())
+                daily = raw_data.get("daily", {})
+                formatted = {
+                    "latitude": lat,
+                    "longitude": lon,
+                    "status": "available",
+                    "updatedAt": datetime.now().strftime("%I:%M %p"),
+                    "daily": {
+                        "time": daily.get("time", []),
+                        "weather_code": daily.get("weather_code", []),
+                        "temperature_2m_max": daily.get("temperature_2m_max", []),
+                        "precipitation_sum": daily.get("precipitation_sum", []),
+                        "precipitation_probability_max": daily.get("precipitation_probability_max", []),
+                        "wind_speed_10m_max": daily.get("wind_speed_10m_max", [])
+                    },
+                    "source": "Open-Meteo",
+                    "notice": "Forecasts are estimates and may change."
+                }
+                _WEATHER_CACHE[cache_key] = formatted
+                _WEATHER_TIMESTAMPS[cache_key] = now
+                return formatted
+    except Exception:
+        # Fallback to stale cached data if available
+        if cache_key in _WEATHER_CACHE:
+            return _WEATHER_CACHE[cache_key]
+
+    # Graceful fallback: weather unavailable
+    return {
+        "latitude": lat,
+        "longitude": lon,
+        "status": "unavailable",
+        "updatedAt": None,
+        "daily": None,
+        "message": "Weather service currently unavailable. No risk penalty applied.",
+        "notice": "Forecasts are estimates and may change."
+    }
+
+@app.get("/weather")
+@app.get("/api/weather")
+def get_weather(lat: float = Query(..., description="Latitude"), lon: float = Query(..., description="Longitude")):
+    return fetch_open_meteo_forecast(lat, lon)
+
+@app.get("/weather/mandis")
+@app.get("/api/weather/mandis")
+def get_mandis_weather():
+    raw_markets = get_cached_json("markets.json")
+    markets = raw_markets.get("markets", raw_markets) if isinstance(raw_markets, dict) else raw_markets
+
+    mandis_weather = {}
+    for m in markets:
+        m_id = m.get("market_id") or m.get("id")
+        lat = m.get("latitude") or m.get("lat")
+        lon = m.get("longitude") or m.get("lon")
+        if lat and lon:
+            mandis_weather[m_id] = fetch_open_meteo_forecast(float(lat), float(lon))
+        else:
+            mandis_weather[m_id] = {
+                "status": "unavailable",
+                "notice": "Forecasts are estimates and may change."
+            }
+
+    return {
+        "status": "ok",
+        "updatedAt": datetime.now().strftime("%I:%M %p"),
+        "mandis": mandis_weather,
+        "notice": "Forecasts are estimates and may change."
+    }
 
 # --- RANKING RECOMMENDATIONS ---
 

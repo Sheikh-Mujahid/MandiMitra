@@ -13,6 +13,7 @@ import {
   ShieldAlert,
   Info
 } from 'lucide-react';
+import WeatherChip from './WeatherChip';
 import { translations } from '../i18n/translations';
 
 export default function RankedMandiList({ rankedMarkets = [], lang = 'en' }) {
@@ -106,6 +107,7 @@ export default function RankedMandiList({ rankedMarkets = [], lang = 'en' }) {
                 <th className="py-3 px-3 text-right">Distance</th>
                 <th className="py-3 px-3 text-right">Price/q</th>
                 <th className="py-3 px-3 text-center">Trend</th>
+                <th className="py-3 px-3 text-center">{t.weatherLabel}</th>
                 <th className="py-3 px-3 text-right">Transport</th>
                 <th className="py-3 px-3 text-right">Other Costs</th>
                 <th className="py-3 px-4 text-right font-black text-emerald-800">Net Return</th>
@@ -184,6 +186,16 @@ export default function RankedMandiList({ rankedMarkets = [], lang = 'en' }) {
                         )}
                         <span>{trendPct >= 0 ? `+${trendPct}%` : `${trendPct}%`}</span>
                       </span>
+                    </td>
+
+                    {/* Weather Chip with Tooltip */}
+                    <td className="py-3.5 px-3 text-center">
+                      <WeatherChip 
+                        weather={item.weather} 
+                        mandiName={item.market.name} 
+                        lang={lang} 
+                        isSampleOverride={item.market.id === 'akola_apmc' && item.weather?.day0?.weatherCode === 95}
+                      />
                     </td>
 
                     {/* Transport */}
@@ -279,6 +291,12 @@ export default function RankedMandiList({ rankedMarkets = [], lang = 'en' }) {
                             e-NAM
                           </span>
                         )}
+                        <WeatherChip 
+                          weather={item.weather} 
+                          mandiName={item.market.name} 
+                          lang={lang} 
+                          isSampleOverride={item.market.id === 'akola_apmc' && item.weather?.day0?.weatherCode === 95}
+                        />
                       </div>
 
                       <div className="flex items-center gap-3 text-xs text-slate-500 mt-1 flex-wrap">
