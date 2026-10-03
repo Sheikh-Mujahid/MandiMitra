@@ -10,6 +10,7 @@ import MandiMap from './components/MandiMap';
 import DataDisclaimerModal from './components/DataDisclaimerModal';
 import WhyChosenModal from './components/WhyChosenModal';
 import CompareMarketsView from './components/CompareMarketsView';
+import BreakEvenDistanceCard from './components/BreakEvenDistanceCard';
 
 import { rankMarkets } from './engine/engine';
 import { translations } from './i18n/translations';
@@ -317,6 +318,16 @@ export default function App() {
             </div>
           </div>
         </div>
+
+        {/* Break-Even Distance Analysis Card */}
+        <BreakEvenDistanceCard
+          rankedMarkets={rankedMarkets}
+          quantity={assumptions.quantity}
+          vehicleType={assumptions.vehicle}
+          ratePerKm={assumptions.ratePerKm}
+          roundTrip={assumptions.roundTrip}
+          lang={lang}
+        />
 
         {/* Navigation Tabs for In-Depth Views */}
         <div className="border-b border-slate-200 pt-2">
