@@ -12,6 +12,7 @@ import WhyChosenModal from './components/WhyChosenModal';
 import CompareMarketsView from './components/CompareMarketsView';
 import BreakEvenDistanceCard from './components/BreakEvenDistanceCard';
 import SellNowVsWaitCard from './components/SellNowVsWaitCard';
+import PriceAlertBanner from './components/PriceAlertBanner';
 
 import { rankMarkets } from './engine/engine';
 import { translations } from './i18n/translations';
@@ -249,7 +250,16 @@ export default function App() {
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
         
+        {/* In-App Target Price Alert Banner */}
+        <PriceAlertBanner
+          rankedMarkets={rankedMarkets}
+          currentCrop={assumptions.crop}
+          cropName={cropDisplayName}
+          lang={lang}
+        />
+
         {/* Top Section: Assumptions & Hero Recommendation */}
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Column: Farm Assumptions Inputs (5 cols on large screens) */}
           <div className="lg:col-span-5 space-y-4">
