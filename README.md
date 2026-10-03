@@ -1,8 +1,15 @@
-# MandiMitra AI (मंडी मित्र एआई)
+# MandiMitra AI (मंडी मित्र एआई / शेतकरी मित्र)
 ### Smart Market Recommendation Platform for Farmers
+
+[![GitHub Pages Deployment](https://github.com/Sheikh-Mujahid/MandiMitra/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/Sheikh-Mujahid/MandiMitra/actions/workflows/deploy-pages.yml)
+[![Daily Mandi Price Sync](https://github.com/Sheikh-Mujahid/MandiMitra/actions/workflows/daily-update.yml/badge.svg)](https://github.com/Sheikh-Mujahid/MandiMitra/actions/workflows/daily-update.yml)
+[![Languages](https://img.shields.io/badge/Languages-English%20%7C%20%E0%A4%B9%E0%A4%BF%E0%A4%82%E0%A4%A6%E0%A4%8Work%20%7C%20%E0%A4%AE%E0%A4%B0%E0%A4%BE%E0%A4%A0%E0%A5%80-emerald)](https://sheikh-mujahid.github.io/MandiMitra/)
 
 > **"Highest price is not always highest profit."**  
 > MandiMitra AI empowers farmers to maximize net in-pocket income by ranking nearby agricultural markets (mandis) based on expected net return after accounting for road distance, vehicle logistics, handling charges, mandi cess, and price trends.
+>
+> 🌐 **Live Demo:** [https://sheikh-mujahid.github.io/MandiMitra/](https://sheikh-mujahid.github.io/MandiMitra/)  
+> 📦 **GitHub Repository:** [https://github.com/Sheikh-Mujahid/MandiMitra](https://github.com/Sheikh-Mujahid/MandiMitra)
 
 ---
 
