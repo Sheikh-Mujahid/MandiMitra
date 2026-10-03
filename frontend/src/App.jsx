@@ -11,6 +11,7 @@ import DataDisclaimerModal from './components/DataDisclaimerModal';
 import WhyChosenModal from './components/WhyChosenModal';
 import CompareMarketsView from './components/CompareMarketsView';
 import BreakEvenDistanceCard from './components/BreakEvenDistanceCard';
+import SellNowVsWaitCard from './components/SellNowVsWaitCard';
 
 import { rankMarkets } from './engine/engine';
 import { translations } from './i18n/translations';
@@ -326,6 +327,14 @@ export default function App() {
           vehicleType={assumptions.vehicle}
           ratePerKm={assumptions.ratePerKm}
           roundTrip={assumptions.roundTrip}
+          lang={lang}
+        />
+
+        {/* Sell Now vs. Wait 3 Days Analysis Card */}
+        <SellNowVsWaitCard
+          topMandi={topMandi}
+          cropName={cropDisplayName}
+          quantity={assumptions.quantity}
           lang={lang}
         />
 
