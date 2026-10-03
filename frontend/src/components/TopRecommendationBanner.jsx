@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { translations } from '../i18n/translations';
 
-export default function TopRecommendationBanner({ topMandi, runnerUp, lang, cropName }) {
+export default function TopRecommendationBanner({ topMandi, runnerUp, lang, cropName, onOpenWhy }) {
   if (!topMandi) return null;
 
   const t = translations[lang] || translations.en;
@@ -47,9 +47,9 @@ export default function TopRecommendationBanner({ topMandi, runnerUp, lang, crop
         {/* Mandi Name & Core Value Proposition */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-5 border-b border-emerald-700/50">
           <div>
-            <div className="flex items-baseline gap-3">
+            <div className="flex items-baseline gap-3 flex-wrap">
               <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight font-heading m-0">
-                {topMandi.market.name}
+                Sell at {topMandi.market.name}
               </h2>
               {topMandi.market.specialty && (
                 <span className="text-xs text-emerald-300 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-600/30 hidden sm:inline">
@@ -58,19 +58,33 @@ export default function TopRecommendationBanner({ topMandi, runnerUp, lang, crop
               )}
             </div>
 
-            {/* Why Chosen Explanation Box */}
-            <div className="mt-3 bg-emerald-950/70 border border-emerald-500/40 rounded-xl p-3.5 max-w-3xl flex items-start gap-3 shadow-inner">
-              <Sparkles className="w-5 h-5 text-amber-300 shrink-0 mt-0.5" />
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-300 block mb-0.5">
-                  {t.whyChosenTitle}
-                </span>
-                <p className="text-sm font-medium text-emerald-50 leading-relaxed m-0">
-                  {topMandi.whyChosen}
-                </p>
+            {/* Why Chosen Explanation Box with "Why?" Button */}
+            <div className="mt-3 bg-emerald-950/70 border border-emerald-500/40 rounded-xl p-3.5 max-w-3xl flex items-start justify-between gap-3 shadow-inner">
+              <div className="flex items-start gap-3">
+                <Sparkles className="w-5 h-5 text-amber-300 shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-amber-300 block mb-0.5">
+                    {t.whyChosenTitle}
+                  </span>
+                  <p className="text-sm font-medium text-emerald-50 leading-relaxed m-0">
+                    {topMandi.whyChosen}
+                  </p>
+                </div>
               </div>
+
+              {onOpenWhy && (
+                <button
+                  type="button"
+                  onClick={onOpenWhy}
+                  className="shrink-0 self-center px-3 py-1.5 bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-xs rounded-xl shadow-md transition-all transform hover:scale-105 active:scale-95 flex items-center gap-1"
+                >
+                  <span>Why?</span>
+                  <Sparkles className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           </div>
+
 
           {/* Big Profit Hero Stat */}
           <div className="lg:text-right shrink-0 bg-emerald-950/80 lg:bg-transparent p-4 lg:p-0 rounded-xl border lg:border-0 border-emerald-700/60">

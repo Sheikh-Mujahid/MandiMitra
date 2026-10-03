@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Header from './components/Header';
 import AssumptionsPanel from './components/AssumptionsPanel';
 import TopRecommendationBanner from './components/TopRecommendationBanner';
@@ -8,9 +8,12 @@ import RevenueCostWaterfallChart from './components/RevenueCostWaterfallChart';
 import PriceTrendHistoryChart from './components/PriceTrendHistoryChart';
 import MandiMap from './components/MandiMap';
 import DataDisclaimerModal from './components/DataDisclaimerModal';
+import WhyChosenModal from './components/WhyChosenModal';
+import CompareMarketsView from './components/CompareMarketsView';
 
 import { rankMarkets } from './engine/engine';
 import { translations } from './i18n/translations';
+import { fetchDataStatus } from './api';
 import pricesData from '../../data/prices.json';
 import distancesData from '../../data/distances.json';
 import lastUpdatedData from '../../data/last_updated.json';
@@ -22,15 +25,29 @@ import {
   TrendingUp, 
   ListOrdered, 
   CheckCircle,
-  Sparkles
+  Sparkles,
+  ArrowRightLeft,
+  X,
+  AlertTriangle
 } from 'lucide-react';
 
 export default function App() {
   const [lang, setLang] = useState('en'); // 'en' | 'hi' | 'mr'
-  const [activeTab, setActiveTab] = useState('rankings'); // 'rankings' | 'tradeoff' | 'waterfall' | 'trends' | 'map'
+  const [activeTab, setActiveTab] = useState('rankings'); // 'rankings' | 'compare' | 'tradeoff' | 'waterfall' | 'trends' | 'map'
   const [isDisclaimerOpen, setIsDisclaimerOpen] = useState(false);
+  const [isWhyOpen, setIsWhyOpen] = useState(false);
+  const [dataStatus, setDataStatus] = useState(null);
+
+  // Recommendation flip highlight banner state
+  const prevTopIdRef = useRef(null);
+  const [flipToast, setFlipToast] = useState(null);
 
   const t = translations[lang] || translations.en;
+
+  // Load data-status on mount
+  useEffect(() => {
+    fetchDataStatus().then(setDataStatus).catch(() => {});
+  }, []);
 
   const defaultAssumptions = {
     crop: pricesData.crops[0]?.id || 'soybean',
@@ -45,7 +62,7 @@ export default function App() {
       marketFeePercent: 1.0,
       commissionPercent: 0.0,
       weighmentPerQntl: 6.0,
-      spoilageFactor: 0.00002
+      spoilageFactor: 0.00015
     }
   };
 
@@ -69,11 +86,57 @@ export default function App() {
   const topMandi = rankedMarkets[0];
   const runnerUp = rankedMarkets[1] || null;
 
-  const currentCropObj = pricesData.crops.find(c => c.id === assumptions.crop) || pricesData.crops[0];
+  // Find nearest and highest modal price mandi
+  const nearestMandi = useMemo(() => {
+    if (rankedMarkets.length === 0) return null;
+    return rankedMarkets.reduce((prev, curr) => (curr.distanceKm < prev.distanceKm ? curr : prev));
+  }, [rankedMarkets]);
+
+  const highestPriceMandi = useMemo(() => {
+    if (rankedMarkets.length === 0) return null;
+    return rankedMarkets.reduce((prev, curr) => (curr.price > prev.price ? curr : prev));
+  }, [rankedMarkets]);
+
+  // Track changes to #1 recommendation and show flip banner
+  useEffect(() => {
+    if (topMandi && topMandi.market) {
+      if (prevTopIdRef.current && prevTopIdRef.current.id !== topMandi.market.id) {
+        setFlipToast({
+          fromName: prevTopIdRef.current.name,
+          toName: topMandi.market.name,
+          toPrice: topMandi.price,
+          toNet: Math.round(topMandi.netReturn)
+        });
+      }
+      prevTopIdRef.current = { id: topMandi.market.id, name: topMandi.market.name };
+    }
+  }, [topMandi?.market?.id]);
+
+  const currentCropObj = pricesData.crops.find((c) => c.id === assumptions.crop) || pricesData.crops[0];
   const cropDisplayName = lang === 'mr' ? currentCropObj.nameMr : lang === 'hi' ? currentCropObj.nameHi : currentCropObj.name;
 
   const handleApplyPreset = (presetKey) => {
-    if (presetKey === 'soybean_morshi' || presetKey === 'preset1') {
+    if (presetKey === 'wheat_amravati_flip') {
+      // 50 q Wheat from Amravati / Morshi cluster:
+      // At Rs 18/km, distant Buldhana (+100 Rs/q higher price) wins #1!
+      // Raising freight slider to Rs 42/km flips #1 to local Amravati APMC!
+      setAssumptions({
+        crop: 'wheat',
+        quantity: 50,
+        location: 'morshi_town',
+        vehicle: 'truck',
+        ratePerKm: 18,
+        priceAdjust: 0,
+        roundTrip: false,
+        extraCosts: {
+          loadingPerQntl: 10.0,
+          marketFeePercent: 1.0,
+          commissionPercent: 0.0,
+          weighmentPerQntl: 5.0,
+          spoilageFactor: 0.00010
+        }
+      });
+    } else if (presetKey === 'soybean_morshi' || presetKey === 'preset1') {
       setAssumptions({
         crop: 'soybean',
         quantity: 60,
@@ -87,7 +150,7 @@ export default function App() {
           marketFeePercent: 1.05,
           commissionPercent: 0.0,
           weighmentPerQntl: 6.0,
-          spoilageFactor: 0.00002
+          spoilageFactor: 0.00015
         }
       });
     } else if (presetKey === 'wheat_katol' || presetKey === 'preset2') {
@@ -104,7 +167,7 @@ export default function App() {
           marketFeePercent: 1.0,
           commissionPercent: 0.0,
           weighmentPerQntl: 5.5,
-          spoilageFactor: 0.00002
+          spoilageFactor: 0.00010
         }
       });
     } else if (presetKey === 'gram_karanja' || presetKey === 'preset3') {
@@ -121,32 +184,54 @@ export default function App() {
           marketFeePercent: 1.0,
           commissionPercent: 0.0,
           weighmentPerQntl: 5.0,
-          spoilageFactor: 0.00002
+          spoilageFactor: 0.00012
         }
       });
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col">
-      {/* Header with 3-way Language Selector */}
+    <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans">
+      {/* Header with 3-way Language Selector & Data Freshness Badge */}
       <Header
         lang={lang}
         setLang={setLang}
         lastUpdated={lastUpdatedData}
+        dataStatus={dataStatus}
         onOpenDisclaimer={() => setIsDisclaimerOpen(true)}
         onApplyPreset={handleApplyPreset}
       />
+
+      {/* Recommendation Changed Alert Banner (Animated flip highlight) */}
+      {flipToast && (
+        <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 text-white px-4 py-2.5 shadow-lg border-b border-amber-600/40">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 text-xs sm:text-sm font-semibold">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-200 animate-spin" />
+              <span>
+                <strong>Recommendation changed:</strong> {flipToast.fromName} &rarr;{' '}
+                <span className="underline font-black text-amber-100">{flipToast.toName}</span> is now #1 (Net Return: ₹{flipToast.toNet.toLocaleString('en-IN')})
+              </span>
+            </div>
+            <button
+              onClick={() => setFlipToast(null)}
+              className="p-1 rounded hover:bg-black/20 text-white/80 hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Mandatory Official Notice Bar */}
       <div className="bg-amber-500/10 border-b border-amber-300/40 text-amber-950 py-2 px-4 text-xs">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="font-extrabold uppercase bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded text-[10px]">
-              {lang === 'mr' ? 'सूचना' : lang === 'hi' ? 'सूचना' : 'Official Notice'}
+              {lang === 'mr' ? 'अधिकृत सूचना' : lang === 'hi' ? 'आधिकारिक सूचना' : 'Official Notice'}
             </span>
             <span className="font-medium">
-              {t.officialNotice}
+              Modal prices from official mandi data; actual price depends on quality and grade.
             </span>
           </div>
 
@@ -183,6 +268,7 @@ export default function App() {
               runnerUp={runnerUp}
               lang={lang}
               cropName={cropDisplayName}
+              onOpenWhy={() => setIsWhyOpen(true)}
             />
 
             {/* Quick Insights Strip below Hero */}
@@ -196,7 +282,7 @@ export default function App() {
                     {t.statHighestModal}
                   </span>
                   <span className="font-bold text-slate-800 text-sm">
-                    ₹{Math.max(...rankedMarkets.map(m => m.price))}/q
+                    ₹{Math.max(...rankedMarkets.map((m) => m.price))}/q
                   </span>
                 </div>
               </div>
@@ -210,7 +296,7 @@ export default function App() {
                     {t.statNearest}
                   </span>
                   <span className="font-bold text-slate-800 text-sm">
-                    {Math.min(...rankedMarkets.map(m => m.distanceKm))} km
+                    {Math.min(...rankedMarkets.map((m) => m.distanceKm))} km
                   </span>
                 </div>
               </div>
@@ -245,6 +331,18 @@ export default function App() {
             >
               <ListOrdered className="w-4 h-4" />
               <span>{t.tabRankings}</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('compare')}
+              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-t-xl border-b-2 transition whitespace-nowrap ${
+                activeTab === 'compare'
+                  ? 'border-emerald-600 text-emerald-800 bg-white font-bold'
+                  : 'border-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <ArrowRightLeft className="w-4 h-4" />
+              <span>Compare 2 Mandis</span>
             </button>
 
             <button
@@ -301,6 +399,13 @@ export default function App() {
         <div>
           {activeTab === 'rankings' && (
             <RankedMandiList
+              rankedMarkets={rankedMarkets}
+              lang={lang}
+            />
+          )}
+
+          {activeTab === 'compare' && (
+            <CompareMarketsView
               rankedMarkets={rankedMarkets}
               lang={lang}
             />
@@ -364,12 +469,25 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Disclaimer Modal */}
+      {/* Disclaimer Methodology Modal */}
       <DataDisclaimerModal
         isOpen={isDisclaimerOpen}
         onClose={() => setIsDisclaimerOpen(false)}
         lang={lang}
         lastUpdated={lastUpdatedData}
+      />
+
+      {/* Why Chosen Detailed Modal */}
+      <WhyChosenModal
+        isOpen={isWhyOpen}
+        onClose={() => setIsWhyOpen(false)}
+        topMandi={topMandi}
+        runnerUp={runnerUp}
+        nearestMandi={nearestMandi}
+        highestPriceMandi={highestPriceMandi}
+        cropName={cropDisplayName}
+        quantity={assumptions.quantity}
+        lang={lang}
       />
     </div>
   );
