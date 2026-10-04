@@ -1,7 +1,6 @@
 {
   "roadWindingFactor": 1.3,
   "calculationMethods": [
-    "haversine_fallback",
     "osrm"
   ],
   "farmerOrigins": [
@@ -297,7 +296,7 @@
         "washim_apmc": 264.3,
         "buldhana_apmc": 250.7,
         "wardha_apmc": 99.5,
-        "achalpur_apmc": 145.2
+        "achalpur_apmc": 151.5
       },
       "routeDetails": {
         "amravati_apmc": {
@@ -343,10 +342,10 @@
           "method": "osrm"
         },
         "achalpur_apmc": {
-          "distanceKm": 145.2,
-          "durationMinutes": 238,
-          "durationHours": 4.0,
-          "method": "haversine_fallback"
+          "distanceKm": 151.5,
+          "durationMinutes": 142,
+          "durationHours": 2.4,
+          "method": "osrm"
         }
       }
     },
