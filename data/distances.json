@@ -169,7 +169,7 @@
         },
         "akola_apmc": {
           "distanceKm": 243.9,
-          "durationMinutes": 192,
+          "durationMinutes": 191,
           "durationHours": 3.2,
           "method": "osrm"
         },
@@ -193,8 +193,8 @@
         },
         "buldhana_apmc": {
           "distanceKm": 288.2,
-          "durationMinutes": 231,
-          "durationHours": 3.9,
+          "durationMinutes": 230,
+          "durationHours": 3.8,
           "method": "osrm"
         },
         "wardha_apmc": {
