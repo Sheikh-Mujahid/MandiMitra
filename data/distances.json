@@ -16,7 +16,7 @@
         "amravati_apmc": 54.2,
         "akola_apmc": 147.8,
         "nagpur_apmc": 155.2,
-        "yavatmal_apmc": 127.2,
+        "yavatmal_apmc": 127.1,
         "washim_apmc": 198.3,
         "buldhana_apmc": 197.0,
         "wardha_apmc": 116.7,
@@ -42,7 +42,7 @@
           "method": "osrm"
         },
         "yavatmal_apmc": {
-          "distanceKm": 127.2,
+          "distanceKm": 127.1,
           "durationMinutes": 122,
           "durationHours": 2.0,
           "method": "osrm"
