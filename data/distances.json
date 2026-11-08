@@ -223,10 +223,10 @@
         "amravati_apmc": 151.7,
         "akola_apmc": 139.1,
         "nagpur_apmc": 305.6,
-        "yavatmal_apmc": 95.6,
+        "yavatmal_apmc": 95.5,
         "washim_apmc": 62.7,
         "buldhana_apmc": 169.4,
-        "wardha_apmc": 165.5,
+        "wardha_apmc": 165.3,
         "achalpur_apmc": 194.6
       },
       "routeDetails": {
@@ -249,9 +249,9 @@
           "method": "osrm"
         },
         "yavatmal_apmc": {
-          "distanceKm": 95.6,
-          "durationMinutes": 93,
-          "durationHours": 1.6,
+          "distanceKm": 95.5,
+          "durationMinutes": 92,
+          "durationHours": 1.5,
           "method": "osrm"
         },
         "washim_apmc": {
@@ -267,8 +267,8 @@
           "method": "osrm"
         },
         "wardha_apmc": {
-          "distanceKm": 165.5,
-          "durationMinutes": 157,
+          "distanceKm": 165.3,
+          "durationMinutes": 155,
           "durationHours": 2.6,
           "method": "osrm"
         },
@@ -296,7 +296,7 @@
         "washim_apmc": 264.3,
         "buldhana_apmc": 250.7,
         "wardha_apmc": 99.5,
-        "achalpur_apmc": 151.5
+        "achalpur_apmc": 154.0
       },
       "routeDetails": {
         "amravati_apmc": {
@@ -342,8 +342,8 @@
           "method": "osrm"
         },
         "achalpur_apmc": {
-          "distanceKm": 151.5,
-          "durationMinutes": 142,
+          "distanceKm": 154.0,
+          "durationMinutes": 143,
           "durationHours": 2.4,
           "method": "osrm"
         }
