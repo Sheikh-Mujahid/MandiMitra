@@ -84,7 +84,7 @@
       "distancesKm": {
         "amravati_apmc": 67.9,
         "akola_apmc": 71.8,
-        "nagpur_apmc": 221.7,
+        "nagpur_apmc": 221.8,
         "yavatmal_apmc": 81.5,
         "washim_apmc": 88.6,
         "buldhana_apmc": 121.0,
@@ -105,7 +105,7 @@
           "method": "osrm"
         },
         "nagpur_apmc": {
-          "distanceKm": 221.7,
+          "distanceKm": 221.8,
           "durationMinutes": 152,
           "durationHours": 2.5,
           "method": "osrm"
